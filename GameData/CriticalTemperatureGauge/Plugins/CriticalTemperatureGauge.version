@@ -1,0 +1,36 @@
+{
+  "NAME": "CriticalTemperatureGauge",
+  "URL": "http://ksp-avc.cybutek.net/version.php?id=334",
+  "DOWNLOAD": "https://github.com/formicant/CriticalTemperatureGauge/releases",
+  "GITHUB":
+  {
+    "USERNAME": "formicant",
+    "REPOSITORY": "CriticalTemperatureGauge",
+    "ALLOW_PRE_RELEASE": false,
+  },
+  "VERSION":
+  {
+    "MAJOR": 1,
+    "MINOR": 1,
+    "PATCH": 3,
+    "BUILD": 3
+  },
+  "KSP_VERSION":
+  {
+    "MAJOR": 1,
+    "MINOR": 1,
+    "PATCH": 3
+  },
+  "KSP_VERSION_MIN":
+  {
+    "MAJOR": 1,
+    "MINOR": 1,
+    "PATCH": 3
+  },
+    "KSP_VERSION_MAX":
+  {
+    "MAJOR": 1,
+    "MINOR": 1,
+    "PATCH": 3
+  },
+}
