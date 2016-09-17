@@ -54,7 +54,7 @@ namespace CriticalTemperatureGauge
 			var sliderStyle = new GUIStyle(GUI.skin.horizontalSlider) { fixedWidth = 222 };
 			var sliderThumbStyle = new GUIStyle(GUI.skin.horizontalSliderThumb);
 
-			if(GUI.Button(new Rect(WindowRectangle.width - 19, 3, 17, 17), "×", closeButtonStyle))
+			if(GUI.Button(new Rect(WindowRectangle.width - 19, 3, 17, 17), "×", closeButtonStyle) && Static.AppLauncher != null)
 				Static.AppLauncher.ButtonState = false;
 			
 			// Drawing layout
@@ -89,7 +89,7 @@ namespace CriticalTemperatureGauge
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.LockGaugeWindow = GUILayout.Toggle(Static.Settings.LockGaugeWindow, "Lock gauge position");
 			Static.Settings.ShowAppLauncherButton = GUILayout.Toggle(Static.Settings.ShowAppLauncherButton, "Show AppLauncher button");
-			Static.AppLauncher.Update();
+			Static.AppLauncher?.Update();
 
 			GUI.DragWindow();
 		}

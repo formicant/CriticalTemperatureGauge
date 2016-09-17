@@ -115,7 +115,7 @@ namespace CriticalTemperatureGauge
 				ShowTemperatureLimit   = settings.GetValue(nameof(ShowTemperatureLimit),   true),
 				ShowTemperatureRate    = settings.GetValue(nameof(ShowTemperatureRate),    true),
 				ShowCriticalPart       = settings.GetValue(nameof(ShowCriticalPart),       true),
-				HighlightCriticalPart  = settings.GetValue(nameof(HighlightCriticalPart),  false),
+				HighlightCriticalPart  = settings.GetValue(nameof(HighlightCriticalPart),  true),
 				UseExclusionList       = settings.GetValue(nameof(UseExclusionList),       false),
 				ExclusionList          = settings.GetValue(nameof(ExclusionList),          ""),
 			};
