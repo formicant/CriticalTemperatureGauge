@@ -145,7 +145,7 @@ namespace CriticalTemperatureGauge
 			try
 			{
 				var title = PartLoader.getPartInfoByName(name).title;
-				return string.IsNullOrEmpty(title) ? title : name;
+				return string.IsNullOrEmpty(title) ? name : title;
 			}
 			catch
 			{
