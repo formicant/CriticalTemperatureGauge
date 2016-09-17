@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace CriticalTemperatureGauge
 {
@@ -11,12 +9,18 @@ namespace CriticalTemperatureGauge
 	/// </summary>
 	public static class Static
 	{
+		/// <summary>User-friendly name of the plugin.</summary>
+		public const string PluginTitle = "Critical Temperature Gauge";
+
 		/// <summary>Path to the Textures folder inside the add-on folder.</summary>
 		public const string TexturePath = nameof(CriticalTemperatureGauge) + "/Textures/";
 
-		static Settings<Flight> _settings;
 		/// <summary>Add-on settings.</summary>
 		public static Settings<Flight> Settings => _settings ?? (_settings = Settings<Flight>.Load());
+		static Settings<Flight> _settings;
+
+		/// <summary>AppLauncher button.</summary>
+		public static AppLauncher AppLauncher { get; set; }
 
 		/// <summary>Current critical part state.</summary>
 		/// <remarks><c>null</c> if there is no current critical part.</remarks>

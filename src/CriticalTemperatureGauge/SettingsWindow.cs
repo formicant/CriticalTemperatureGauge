@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace CriticalTemperatureGauge
 {
 	/// <summary>
-	/// Represents the configuration window.
+	/// Represents the settings window.
 	/// </summary>
-	public class ConfigWindow : Window
+	public class SettingsWindow : Window
 	{
-		/// <summary>Slider resolution..</summary>
+		/// <summary>Slider resolution.</summary>
 		const int ThresholdSteps = 20;
 
 		// Layout parameters
@@ -20,19 +19,19 @@ namespace CriticalTemperatureGauge
 
 		protected override Rect InitialWindowRectangle =>
 			new Rect(
-				Static.Settings.ConfigWindowPosition != Vector2.zero
-					? Static.Settings.ConfigWindowPosition
+				Static.Settings.SettingsWindowPosition != Vector2.zero
+					? Static.Settings.SettingsWindowPosition
 					: new Vector2(Screen.width - 285, (Screen.height - 410) / 2),
 				Vector2.zero);
 
-		/// <summary>Creates the configuration window.</summary>
-		public ConfigWindow()
-			: base(Static.Settings.BaseWindowId + 1, "Critical Temperature Gauge") { }
+		/// <summary>Creates the settings window.</summary>
+		public SettingsWindow()
+			: base(Static.Settings.BaseWindowId + 1, Static.PluginTitle + " ") { }
 
 		/// <summary>Writes current window position into settings.</summary>
 		protected override void OnWindowRectUpdated()
 		{
-			Static.Settings.ConfigWindowPosition = WindowRectangle.position;
+			Static.Settings.SettingsWindowPosition = WindowRectangle.position;
 		}
 
 		/// <summary>Draws the window contents.</summary>
@@ -40,7 +39,11 @@ namespace CriticalTemperatureGauge
 		protected override void WindowGUI(int windowId)
 		{
 			// Defining styles
-			var windowStyle = new GUIStyle(GUI.skin.window) { padding = new RectOffset(8, 8, 8, 8) };
+			var closeButtonStyle = new GUIStyle(GUI.skin.button)
+			{
+				alignment = TextAnchor.MiddleCenter,
+				padding = new RectOffset(0, 0, 3, 0),
+			};
 			var textEditStyle = new GUIStyle(GUI.skin.textField);
 			var labelStyle = new GUIStyle(GUI.skin.label)
 			{
@@ -51,6 +54,9 @@ namespace CriticalTemperatureGauge
 			var sliderStyle = new GUIStyle(GUI.skin.horizontalSlider) { fixedWidth = 222 };
 			var sliderThumbStyle = new GUIStyle(GUI.skin.horizontalSliderThumb);
 
+			if(GUI.Button(new Rect(WindowRectangle.width - 19, 3, 17, 17), "×", closeButtonStyle))
+				Static.AppLauncher.ButtonState = false;
+			
 			// Drawing layout
 			GUILayout.Space(SeparatorHeight);
 
@@ -70,9 +76,8 @@ namespace CriticalTemperatureGauge
 			Static.Settings.ShowTemperatureLimit = GUILayout.Toggle(Static.Settings.ShowTemperatureLimit, "Show temperature limit");
 			GUILayout.EndHorizontal();
 			Static.Settings.ShowTemperatureRate = GUILayout.Toggle(Static.Settings.ShowTemperatureRate, "Show temperature rate");
-			Static.Settings.ShowCriticalPart = GUILayout.Toggle(Static.Settings.ShowCriticalPart, "Show critical part");
-			// (Part highlighting does not work for some reason)
-			//Static.Settings.HighlightCriticalPart = GUILayout.Toggle(Static.Settings.HighlightCriticalPart, "Highlight critical part");
+			Static.Settings.ShowCriticalPart = GUILayout.Toggle(Static.Settings.ShowCriticalPart, "Show critical part name");
+			Static.Settings.HighlightCriticalPart = GUILayout.Toggle(Static.Settings.HighlightCriticalPart, "Highlight critical part");
 
 			// Drawing exclusion list settings controls
 			GUILayout.Space(SeparatorHeight);
@@ -83,6 +88,8 @@ namespace CriticalTemperatureGauge
 			// Drawing interface settings controls
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.LockGaugeWindow = GUILayout.Toggle(Static.Settings.LockGaugeWindow, "Lock gauge position");
+			Static.Settings.ShowAppLauncherButton = GUILayout.Toggle(Static.Settings.ShowAppLauncherButton, "Show AppLauncher button");
+			Static.AppLauncher.Update();
 
 			GUI.DragWindow();
 		}

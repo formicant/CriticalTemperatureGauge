@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace CriticalTemperatureGauge
@@ -12,9 +11,20 @@ namespace CriticalTemperatureGauge
 	public abstract class Window
 	{
 		public int WindowId { get; }
+
 		public string Title { get; }
+
+		/// <summary>Is the background of the window transparent.</summary>
 		public bool HasClearBackground { get; }
-		public bool IsVisible { get; private set; }
+
+		/// <summary>Should the window be visible? (Disregarding the F2 key.)</summary>
+		public bool IsLogicallyVisible { get; private set; }
+
+		/// <summary><c>false</c>, if the F2 key pressed, <c>true</c> otherwise.</summary>
+		public bool CanShow { get; set; } = true;
+
+		/// <summary>Is the window visible?</summary>
+		public bool IsVisible => CanShow && IsLogicallyVisible;
 
 		Rect? _windowRectangle;
 		public Rect WindowRectangle
@@ -39,12 +49,17 @@ namespace CriticalTemperatureGauge
 
 		public void Show()
 		{
-			IsVisible = true;
+			IsLogicallyVisible = true;
 		}
 
 		public void Hide()
 		{
-			IsVisible = false;
+			IsLogicallyVisible = false;
+		}
+
+		public void Toggle()
+		{
+			IsLogicallyVisible = !IsLogicallyVisible;
 		}
 
 		public void DrawGUI()

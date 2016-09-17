@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CriticalTemperatureGauge
 {
@@ -12,6 +11,9 @@ namespace CriticalTemperatureGauge
 	{
 		/// <summary>Moment of time the parameters were measured at.</summary>
 		public double Time { get; set; }
+
+		/// <summary>Vessel part.</summary>
+		public Part Part { get; set; }
 
 		/// <summary>Vessel part Id.</summary>
 		public uint Id { get; set; }
