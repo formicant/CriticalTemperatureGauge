@@ -52,11 +52,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="PartTemperatureState.cs" />
     <Compile Include="SettingsWindow.cs" />
     <Compile Include="Flight.cs" />
     <Compile Include="GaugeWindow.cs" />
     <Compile Include="Highlighter.cs" />
-    <Compile Include="PartState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Static.cs" />

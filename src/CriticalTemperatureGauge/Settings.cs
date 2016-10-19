@@ -25,6 +25,11 @@ namespace CriticalTemperatureGauge
 		public bool ShowCriticalPart { get; set; }
 		public bool HighlightCriticalPart { get; set; }
 
+		// Part menu settings
+		public bool PartMenuTemperature { get; set; }
+		public bool PartMenuTemperatureLimit { get; set; }
+		public bool PartMenuTemperatureRate { get; set; }
+
 		// Gauge visibility settings
 
 		public bool ForceShowGauge { get; set; }
@@ -43,14 +48,6 @@ namespace CriticalTemperatureGauge
 		{
 			get { return _gaugeHidingThreshold; }
 			set { _gaugeHidingThreshold = Math.Min(GaugeShowingThreshold, value > 0 && value < 1 ? value : DefaultGaugeHidingThreshold); }
-		}
-
-		const int DefaultBaseWindowId = -130716;
-		int _baseWindowId;
-		public int BaseWindowId
-		{
-			get { return _baseWindowId; }
-			set { _baseWindowId = value != 0 ? value : DefaultBaseWindowId; }
 		}
 
 		// Exclusion list settings
@@ -72,30 +69,33 @@ namespace CriticalTemperatureGauge
 		}
 		public IEnumerable<string> ExclusionListItems { get; private set; }
 
-		/// <summary>Saves the settings to an XML file inside PluginData directory.</summary>
+		/// <summary>Saves the settings to the XML file inside PluginData directory.</summary>
 		public void Save()
 		{
 			var settings = PluginConfiguration.CreateForType<TAddon>();
 
-			settings.SetValue(nameof(SettingsWindowPosition), SettingsWindowPosition);
-			settings.SetValue(nameof(GaugeWindowPosition),    GaugeWindowPosition);
-			settings.SetValue(nameof(ShowAppLauncherButton),  ShowAppLauncherButton);
-			settings.SetValue(nameof(LockGaugeWindow),        LockGaugeWindow);
-			settings.SetValue(nameof(ForceShowGauge),         ForceShowGauge);
-			settings.SetValue(nameof(GaugeShowingThreshold),  GaugeShowingThreshold);
-			settings.SetValue(nameof(GaugeHidingThreshold),   GaugeHidingThreshold);
-			settings.SetValue(nameof(ShowTemperature),        ShowTemperature);
-			settings.SetValue(nameof(ShowTemperatureLimit),   ShowTemperatureLimit);
-			settings.SetValue(nameof(ShowTemperatureRate),    ShowTemperatureRate);
-			settings.SetValue(nameof(ShowCriticalPart),       ShowCriticalPart);
-			settings.SetValue(nameof(HighlightCriticalPart),  HighlightCriticalPart);
-			settings.SetValue(nameof(UseExclusionList),       UseExclusionList);
-			settings.SetValue(nameof(ExclusionList),          ExclusionList);
+			settings.SetValue(nameof(SettingsWindowPosition),   SettingsWindowPosition);
+			settings.SetValue(nameof(GaugeWindowPosition),      GaugeWindowPosition);
+			settings.SetValue(nameof(ShowAppLauncherButton),    ShowAppLauncherButton);
+			settings.SetValue(nameof(LockGaugeWindow),          LockGaugeWindow);
+			settings.SetValue(nameof(ForceShowGauge),           ForceShowGauge);
+			settings.SetValue(nameof(GaugeShowingThreshold),    GaugeShowingThreshold);
+			settings.SetValue(nameof(GaugeHidingThreshold),     GaugeHidingThreshold);
+			settings.SetValue(nameof(ShowTemperature),          ShowTemperature);
+			settings.SetValue(nameof(ShowTemperatureLimit),     ShowTemperatureLimit);
+			settings.SetValue(nameof(ShowTemperatureRate),      ShowTemperatureRate);
+			settings.SetValue(nameof(ShowCriticalPart),         ShowCriticalPart);
+			settings.SetValue(nameof(HighlightCriticalPart),    HighlightCriticalPart);
+			settings.SetValue(nameof(PartMenuTemperature),      PartMenuTemperature);
+			settings.SetValue(nameof(PartMenuTemperatureLimit), PartMenuTemperatureLimit);
+			settings.SetValue(nameof(PartMenuTemperatureRate),  PartMenuTemperatureRate);
+			settings.SetValue(nameof(UseExclusionList),         UseExclusionList);
+			settings.SetValue(nameof(ExclusionList),            ExclusionList);
 
 			settings.save();
 		}
 
-		/// <summary>Loads settings from an XML file inside PluginData directory.</summary>
+		/// <summary>Loads settings from the XML file inside PluginData directory.</summary>
 		/// <returns>Loaded settings.</returns>
 		public static Settings<TAddon> Load()
 		{
@@ -104,20 +104,23 @@ namespace CriticalTemperatureGauge
 
 			return new Settings<TAddon>
 			{
-				SettingsWindowPosition = settings.GetValue(nameof(SettingsWindowPosition), Vector2.zero),
-				GaugeWindowPosition    = settings.GetValue(nameof(GaugeWindowPosition),    Vector2.zero),
-				ShowAppLauncherButton  = settings.GetValue(nameof(ShowAppLauncherButton),  true),
-				LockGaugeWindow        = settings.GetValue(nameof(LockGaugeWindow),        true),
-				ForceShowGauge         = settings.GetValue(nameof(ForceShowGauge),         false),
-				GaugeShowingThreshold  = settings.GetValue(nameof(GaugeShowingThreshold),  DefaultGaugeShowingThreshold),
-				GaugeHidingThreshold   = settings.GetValue(nameof(GaugeHidingThreshold),   DefaultGaugeHidingThreshold),
-				ShowTemperature        = settings.GetValue(nameof(ShowTemperature),        true),
-				ShowTemperatureLimit   = settings.GetValue(nameof(ShowTemperatureLimit),   true),
-				ShowTemperatureRate    = settings.GetValue(nameof(ShowTemperatureRate),    true),
-				ShowCriticalPart       = settings.GetValue(nameof(ShowCriticalPart),       true),
-				HighlightCriticalPart  = settings.GetValue(nameof(HighlightCriticalPart),  true),
-				UseExclusionList       = settings.GetValue(nameof(UseExclusionList),       false),
-				ExclusionList          = settings.GetValue(nameof(ExclusionList),          ""),
+				SettingsWindowPosition   = settings.GetValue(nameof(SettingsWindowPosition),   Vector2.zero),
+				GaugeWindowPosition      = settings.GetValue(nameof(GaugeWindowPosition),      Vector2.zero),
+				ShowAppLauncherButton    = settings.GetValue(nameof(ShowAppLauncherButton),    true),
+				LockGaugeWindow          = settings.GetValue(nameof(LockGaugeWindow),          true),
+				ForceShowGauge           = settings.GetValue(nameof(ForceShowGauge),           false),
+				GaugeShowingThreshold    = settings.GetValue(nameof(GaugeShowingThreshold),    DefaultGaugeShowingThreshold),
+				GaugeHidingThreshold     = settings.GetValue(nameof(GaugeHidingThreshold),     DefaultGaugeHidingThreshold),
+				ShowTemperature          = settings.GetValue(nameof(ShowTemperature),          true),
+				ShowTemperatureLimit     = settings.GetValue(nameof(ShowTemperatureLimit),     true),
+				ShowTemperatureRate      = settings.GetValue(nameof(ShowTemperatureRate),      true),
+				ShowCriticalPart         = settings.GetValue(nameof(ShowCriticalPart),         true),
+				HighlightCriticalPart    = settings.GetValue(nameof(HighlightCriticalPart),    true),
+				PartMenuTemperature      = settings.GetValue(nameof(PartMenuTemperature),      true),
+				PartMenuTemperatureLimit = settings.GetValue(nameof(PartMenuTemperatureLimit), true),
+				PartMenuTemperatureRate  = settings.GetValue(nameof(PartMenuTemperatureRate),  true),
+				UseExclusionList         = settings.GetValue(nameof(UseExclusionList),         false),
+				ExclusionList            = settings.GetValue(nameof(ExclusionList),            ""),
 			};
 		}
 	}

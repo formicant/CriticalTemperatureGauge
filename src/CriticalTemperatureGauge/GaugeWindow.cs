@@ -22,20 +22,22 @@ namespace CriticalTemperatureGauge
 		};
 		static readonly Rect GaugeFrameRectangle = new Rect(0, 0, GaugeFrameTexture.width, GaugeFrameTexture.height);
 		static readonly Rect GaugeScaleRectangle = new Rect(6, 4, GaugeScaleTexture.width, 12);
-		static readonly Rect InnerLabelRectangle = new Rect(0, 2, GaugeFrameTexture.width, GaugeFrameTexture.height);
-		static readonly Rect OuterLabelRectangle = new Rect(0, GaugeFrameTexture.height - 2, GaugeFrameTexture.width, GaugeFrameTexture.height);
+		static readonly Rect InnerLabelRectangle = new Rect(0, 1, GaugeFrameTexture.width, GaugeFrameTexture.height);
+		static readonly Rect OuterLabelRectangle = new Rect(0, GaugeFrameTexture.height - 3, GaugeFrameTexture.width, GaugeFrameTexture.height);
 		const int FontSize = 12;
+
+		protected override GUISkin Skin => HighLogic.Skin;
 
 		protected override Rect InitialWindowRectangle =>
 			new Rect(
 				Static.Settings.GaugeWindowPosition != Vector2.zero
 					? Static.Settings.GaugeWindowPosition
 					: new Vector2((Screen.width - GaugeFrameTexture.width) / 2, 83),
-				new Vector2(GaugeFrameTexture.width, GaugeFrameTexture.height));
+				new Vector2(GaugeFrameTexture.width, 36));
 
 		/// <summary>Creates the temperature gauge window.</summary>
 		public GaugeWindow()
-			: base(Static.Settings.BaseWindowId + 0, hasClearBackground: true) { }
+			: base(Static.BaseWindowId + 0, hasClearBackground: true) { }
 
 		/// <summary>Writes current window position into settings.</summary>
 		protected override void OnWindowRectUpdated()
@@ -62,19 +64,18 @@ namespace CriticalTemperatureGauge
 				// Drawing temperature and temperature limit values
 				if(Static.Settings.ShowTemperature)
 					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleCenter, FontSize,
-						$@"{Static.CriticalPartState.CriticalTemperature:F0}{
-							(Static.Settings.ShowTemperatureLimit ? $" / {Static.CriticalPartState.CriticalTemperatureLimit:F0}" : "")} K");
+						$@"{Static.CriticalPartState.CriticalTemperature.ToUnsignedString(4, 0)}{
+							(Static.Settings.ShowTemperatureLimit ? $" / {Static.CriticalPartState.CriticalTemperatureLimit.ToUnsignedString(3, 0)}" : "")} K");
 
 				// Drawing temperature rate value
 				if(Static.Settings.ShowTemperatureRate)
 					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleLeft, FontSize,
-						$@"  {(Static.CriticalPartState.CriticalTemperatureRate < 0 ? "−" : "+")}{
-							Math.Abs(Static.CriticalPartState.CriticalTemperatureRate):F0} K/s");
+						$@"   {Static.CriticalPartState.CriticalTemperatureRate.ToSignedString(1, 0)} K/s");
 
 				// Drawing critical part name
 				if(Static.Settings.ShowCriticalPart)
 					DrawContrastLabel(OuterLabelRectangle, TextAnchor.MiddleLeft, FontSize,
-						$@" {Static.CriticalPartState.Name} ({(Static.CriticalPartState.IsSkinCritical ? "skin" : "core")})");
+						$@" {Static.CriticalPartState.Title} ({(Static.CriticalPartState.IsSkinCritical ? "skin" : "core")})");
 
 				GUILayout.EndVertical();
 

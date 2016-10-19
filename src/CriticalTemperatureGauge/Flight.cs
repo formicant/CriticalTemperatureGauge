@@ -66,7 +66,7 @@ namespace CriticalTemperatureGauge
 			{
 				// Updating critical part state
 				var criticalPartState = GetCriticalPartState(vessel);
-				criticalPartState?.UpdateTemperatureRates(Static.CriticalPartState);
+				//criticalPartState?.UpdateTemperatureRates(Static.CriticalPartState);
 				Static.CriticalPartState = criticalPartState;
 
 				// Determining if the gauge should be shown or hidden
@@ -92,7 +92,7 @@ namespace CriticalTemperatureGauge
 					(_highlighter.IsThereHighlightedPart &&
 					criticalPartState.Index > Static.Settings.GaugeHidingThreshold ||
 					criticalPartState.Index > Static.Settings.GaugeShowingThreshold)
-						? criticalPartState.Part
+						? criticalPartState.part
 						: null);
 			}
 		}
@@ -100,28 +100,19 @@ namespace CriticalTemperatureGauge
 		/// <summary>Finds the part with the greatest Temp/TempLimit ratio.</summary>
 		/// <param name="vessel">Current vessel.</param>
 		/// <returns>Critical part state.</returns>
-		static PartState GetCriticalPartState(Vessel vessel) =>
+		static PartTemperatureState GetCriticalPartState(Vessel vessel) =>
 			vessel.parts
 				.Where(IsPartNotIgnored)
 				.Select(GetPartState)
+				.OfType<PartTemperatureState>()
 				.OrderByDescending(partState => partState.Index)
 				.FirstOrDefault();
 
 		/// <summary>Gets parameters of a part.</summary>
 		/// <param name="part">A vessel part.</param>
 		/// <returns>Part state.</returns>
-		static PartState GetPartState(Part part) =>
-			new PartState
-			{
-				Time = Planetarium.GetUniversalTime(),
-				Part = part,
-				Id = part.flightID,
-				Name = GetPartTitle(part),
-				CoreTemperatureLimit = part.maxTemp,
-				SkinTemperatureLimit = part.skinMaxTemp,
-				CoreTemperature = part.temperature,
-				SkinTemperature = part.skinTemperature,
-			};
+		static PartTemperatureState GetPartState(Part part) =>
+			part.Modules.GetModules<PartTemperatureState>().FirstOrDefault();
 
 		/// <summary>Determines if the part has a module containing in the exclusion list.</summary>
 		/// <param name="part">A vessel part.</param>
@@ -129,28 +120,5 @@ namespace CriticalTemperatureGauge
 		static bool IsPartNotIgnored(Part part) =>
 			!(Static.Settings.UseExclusionList &&
 				Static.Settings.ExclusionListItems.Any(moduleName => part.Modules.Contains(moduleName)));
-
-		/// <summary>Gets the title (long name) of a part.</summary>
-		/// <param name="part">A vessel part.</param>
-		/// <returns>Part title.</returns>
-		static string GetPartTitle(Part part)
-		{
-			// Removing vessel name from part name
-			int indexOfWhitespace = part.name.IndexOf(' ');
-			var name = indexOfWhitespace >= 0
-				? part.name.Substring(0, indexOfWhitespace)
-				: part.name;
-
-			// Trying to get part title; using part name if failed
-			try
-			{
-				var title = PartLoader.getPartInfoByName(name).title;
-				return string.IsNullOrEmpty(title) ? name : title;
-			}
-			catch
-			{
-				return name;
-			}
-		}
 	}
 }

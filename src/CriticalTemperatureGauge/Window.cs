@@ -47,6 +47,8 @@ namespace CriticalTemperatureGauge
 			HasClearBackground = hasClearBackground;
 		}
 
+		protected abstract GUISkin Skin { get; }
+
 		public void Show()
 		{
 			IsLogicallyVisible = true;
@@ -66,7 +68,7 @@ namespace CriticalTemperatureGauge
 		{
 			if(IsVisible)
 			{
-				GUI.skin = HighLogic.Skin;
+				GUI.skin = Skin;
 				var backgroundColor = GUI.backgroundColor;
 				if(HasClearBackground)
 					GUI.backgroundColor = Color.clear;

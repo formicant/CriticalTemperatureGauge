@@ -24,6 +24,9 @@ namespace CriticalTemperatureGauge
 
 		/// <summary>Current critical part state.</summary>
 		/// <remarks><c>null</c> if there is no current critical part.</remarks>
-		public static PartState CriticalPartState { get; set; }
+		public static PartTemperatureState CriticalPartState { get; set; }
+
+		/// <summary>A ‘random’ number used as Id of the mod windows.</summary>
+		public const int BaseWindowId = -130716;
 	}
 }
