@@ -23,7 +23,7 @@ namespace CriticalTemperatureGauge
 			new Rect(
 				Static.Settings.SettingsWindowPosition != Vector2.zero
 					? Static.Settings.SettingsWindowPosition
-					: new Vector2(Screen.width - 265, (Screen.height - 388) / 2),
+					: new Vector2(Screen.width - 265, (Screen.height - 392) / 2),
 				Vector2.zero);
 
 		/// <summary>Creates the settings window.</summary>
@@ -63,6 +63,7 @@ namespace CriticalTemperatureGauge
 			// Drawing layout
 
 			// Drawing gauge visibility settings controls
+			GUILayout.Space(SeparatorHeight);
 			GUILayout.Label($"Gauge showing threshold: {Static.Settings.GaugeShowingThreshold:G2}", labelStyle);
 			Static.Settings.GaugeShowingThreshold =
 				Math.Round(GUILayout.HorizontalSlider((float)Static.Settings.GaugeShowingThreshold, 1F / ThresholdSteps, 1F - 1F / ThresholdSteps, sliderStyle, sliderThumbStyle) * ThresholdSteps) / ThresholdSteps;
