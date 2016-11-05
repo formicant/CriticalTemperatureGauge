@@ -10,7 +10,7 @@ namespace CriticalTemperatureGauge
 	{
 		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "Core temperature")]
 		public string CoreTemperatureMenuLabel;
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "Skin\u2009 temperature"/* U+2009 Thin Space */)]
+		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "\u2009Skin temperature"/* U+2009 Thin Space */)]
 		public string SkinTemperatureMenuLabel;
 
 		BaseField CoreTemperatureField { get; set; }
