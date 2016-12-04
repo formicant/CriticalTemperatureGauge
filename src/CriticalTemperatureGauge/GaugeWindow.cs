@@ -28,12 +28,16 @@ namespace CriticalTemperatureGauge
 
 		protected override GUISkin Skin => HighLogic.Skin;
 
+		private Vector2? _constWindowSize;
+		protected override Vector2? ConstWindowSize =>
+			_constWindowSize ?? (_constWindowSize = new Vector2(GaugeFrameTexture.width, 36));
+
 		protected override Rect InitialWindowRectangle =>
 			new Rect(
 				Static.Settings.GaugeWindowPosition != Vector2.zero
 					? Static.Settings.GaugeWindowPosition
 					: new Vector2((Screen.width - GaugeFrameTexture.width) / 2, 83),
-				new Vector2(GaugeFrameTexture.width, 36));
+				ConstWindowSize.Value);
 
 		/// <summary>Creates the temperature gauge window.</summary>
 		public GaugeWindow()

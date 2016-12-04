@@ -40,6 +40,8 @@ namespace CriticalTemperatureGauge
 			}
 		}
 
+		protected virtual Vector2? ConstWindowSize => null;
+
 		protected Window(int windowId, string title = "", bool hasClearBackground = false)
 		{
 			WindowId = windowId;
@@ -72,7 +74,10 @@ namespace CriticalTemperatureGauge
 				var backgroundColor = GUI.backgroundColor;
 				if(HasClearBackground)
 					GUI.backgroundColor = Color.clear;
-				WindowRectangle = GUILayout.Window(WindowId, WindowRectangle, WindowGUI, Title);
+				var windowRectangle = GUILayout.Window(WindowId, WindowRectangle, WindowGUI, Title);
+				WindowRectangle = ConstWindowSize.HasValue
+					? new Rect(windowRectangle.position, ConstWindowSize.Value)
+					: windowRectangle;
 				GUI.backgroundColor = backgroundColor;
 			}
 		}
