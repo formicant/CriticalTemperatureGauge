@@ -34,13 +34,13 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\_Lib\1.2.1 x64\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\_Lib\1.2.2 x64\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\_Lib\1.2.1 x64\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\_Lib\1.2.2 x64\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
