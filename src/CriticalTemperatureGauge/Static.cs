@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using KSP.Localization;
 
 namespace CriticalTemperatureGauge
 {
@@ -10,7 +11,7 @@ namespace CriticalTemperatureGauge
 	public static class Static
 	{
 		/// <summary>User-friendly name of the plugin.</summary>
-		public const string PluginTitle = "Critical Temperature Gauge";
+		public static readonly string PluginTitle = Localizer.Format("#ModCriticalTemperatureGauge_Title");
 
 		/// <summary>Path to the Textures folder inside the add-on folder.</summary>
 		public const string TexturePath = nameof(CriticalTemperatureGauge) + "/Textures/";

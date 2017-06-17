@@ -2,15 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using KSP.Localization;
 using UnityEngine;
 
 namespace CriticalTemperatureGauge
 {
 	public class PartTemperatureState : PartModule
 	{
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "Core temperature")]
+		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#ModCriticalTemperatureGauge_PartMenuCore")]
 		public string CoreTemperatureMenuLabel;
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "\u2009Skin temperature"/* U+2009 Thin Space */)]
+		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#ModCriticalTemperatureGauge_PartMenuSkin")]
 		public string SkinTemperatureMenuLabel;
 
 		BaseField CoreTemperatureField { get; set; }
@@ -82,15 +83,21 @@ namespace CriticalTemperatureGauge
 
 					CoreTemperatureMenuLabel = Static.Settings.PartMenuTemperature
 						? $@"{
-							CoreTemperature.ToUnsignedString(4, 0)}{
-							(Static.Settings.PartMenuTemperatureLimit ? $" / {CoreTemperatureLimit.ToUnsignedString(3, 0)}" : "")} K{
-							(Static.Settings.PartMenuTemperatureRate ? $" {CoreTemperatureRate.ToSignedString(3, 0)} K/s" : "")}"
+							Localizer.Format(Static.Settings.PartMenuTemperatureLimit ? "#ModCriticalTemperatureGauge_TemperatureWithLimit" : "#ModCriticalTemperatureGauge_Temperature",
+								CoreTemperature.ToUnsignedString(4, 0),
+								CoreTemperatureLimit.ToUnsignedString(3, 0))}{
+							(Static.Settings.PartMenuTemperatureRate
+								? " " + Localizer.Format("#ModCriticalTemperatureGauge_TemperatureRate", CoreTemperatureRate.ToSignedString(3, 0))
+								: "")}"
 						: null;
 					SkinTemperatureMenuLabel = Static.Settings.PartMenuTemperature
 						? $@"{
-							SkinTemperature.ToUnsignedString(4, 0)}{
-							(Static.Settings.PartMenuTemperatureLimit ? $" / {SkinTemperatureLimit.ToUnsignedString(3, 0)}" : "")} K{
-							(Static.Settings.PartMenuTemperatureRate ? $" {SkinTemperatureRate.ToSignedString(3, 0)} K/s" : "")}"
+							Localizer.Format(Static.Settings.PartMenuTemperatureLimit ? "#ModCriticalTemperatureGauge_TemperatureWithLimit" : "#ModCriticalTemperatureGauge_Temperature",
+								SkinTemperature.ToUnsignedString(4, 0),
+								SkinTemperatureLimit.ToUnsignedString(3, 0))}{
+							(Static.Settings.PartMenuTemperatureRate
+								? " " + Localizer.Format("#ModCriticalTemperatureGauge_TemperatureRate", SkinTemperatureRate.ToSignedString(3, 0))
+								: "")}"
 						: null;
 				}
 				CoreTemperatureField.guiActive = Static.Settings.PartMenuTemperature;
