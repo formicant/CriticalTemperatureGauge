@@ -31,15 +31,22 @@ namespace CriticalTemperatureGauge
 
 		public void OnDestroy()
 		{
-			GameEvents.onShowUI.Remove(OnShowUI);
-			GameEvents.onHideUI.Remove(OnHideUI);
-			_gaugeWindow?.Hide();
-			if(Static.AppLauncher != null)
-				Static.AppLauncher.ButtonState = false;
-			Static.CriticalPartState = null;
-			_toolbar.Destroy();
-			Static.Settings.Save();
-			Debug.Log($"{nameof(CriticalTemperatureGauge)}: Exiting scene {HighLogic.LoadedScene}.");
+			try
+			{
+				Static.Settings.Save();
+				GameEvents.onShowUI.Remove(OnShowUI);
+				GameEvents.onHideUI.Remove(OnHideUI);
+				_gaugeWindow?.Hide();
+				Static.CriticalPartState = null;
+				_toolbar.Destroy();
+				if(Static.AppLauncher != null)
+					Static.AppLauncher.ButtonState = false;
+				Debug.Log($"{nameof(CriticalTemperatureGauge)}: Exiting scene {HighLogic.LoadedScene}.");
+			}
+			catch(Exception exception)
+			{
+				Debug.Log($"{nameof(CriticalTemperatureGauge)}: Exception during exiting scene {HighLogic.LoadedScene}: {exception}");
+			}
 		}
 
 		void OnShowUI()
