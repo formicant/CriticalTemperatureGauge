@@ -29,7 +29,7 @@ namespace CriticalTemperatureGauge
 
 		/// <summary>Creates the settings window.</summary>
 		public SettingsWindow()
-			: base(Static.BaseWindowId + 1, Static.PluginTitle + " ") { }
+			: base(Static.BaseWindowId + 1, Static.PluginTitle + " "/* U+2003 Em Space */) { }
 
 		/// <summary>Writes current window position into settings.</summary>
 		protected override void OnWindowRectUpdated()
@@ -66,50 +66,50 @@ namespace CriticalTemperatureGauge
 			// Drawing gauge visibility settings controls
 			GUILayout.Space(SeparatorHeight);
 			GUILayout.Label(
-				Localizer.Format("#ModCriticalTemperatureGauge_GaugeShowingThreshold") + $" {Static.Settings.GaugeShowingThreshold:G2}",
+				Localizer.Format("#LOC_CriticalTemperatureGauge_GaugeShowingThreshold") + $" {Static.Settings.GaugeShowingThreshold:G2}",
 				labelStyle);
 			Static.Settings.GaugeShowingThreshold =
 				Math.Round(GUILayout.HorizontalSlider((float)Static.Settings.GaugeShowingThreshold, 1F / ThresholdSteps, 1F - 1F / ThresholdSteps, sliderStyle, sliderThumbStyle) * ThresholdSteps) / ThresholdSteps;
 			GUILayout.Label(
-				Localizer.Format("#ModCriticalTemperatureGauge_GaugeHidingThreshold") + $" {Static.Settings.GaugeHidingThreshold:G2}",
+				Localizer.Format("#LOC_CriticalTemperatureGauge_GaugeHidingThreshold") + $" {Static.Settings.GaugeHidingThreshold:G2}",
 				labelStyle);
 			Static.Settings.GaugeHidingThreshold = Math.Min(Static.Settings.GaugeShowingThreshold,
 				Math.Round(GUILayout.HorizontalSlider((float)Static.Settings.GaugeHidingThreshold, 1F / ThresholdSteps, 1F - 1F / ThresholdSteps, sliderStyle, sliderThumbStyle) * ThresholdSteps) / ThresholdSteps);
-			Static.Settings.ForceShowGauge = GUILayout.Toggle(
-				Static.Settings.ForceShowGauge,
-				Localizer.Format("#ModCriticalTemperatureGauge_ForceShowGauge"),
+			Static.Settings.AlwaysShowGauge = GUILayout.Toggle(
+				Static.Settings.AlwaysShowGauge,
+				Localizer.Format("#LOC_CriticalTemperatureGauge_AlwaysShowGauge"),
 				toggleStyle);
 
 			// Drawing additional information settings controls
 			Static.Settings.ShowTemperature = GUILayout.Toggle(
 				Static.Settings.ShowTemperature,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperature"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperature"),
 				toggleStyle);
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(IndentWidth);
 			Static.Settings.ShowTemperatureLimit = GUILayout.Toggle(
 				Static.Settings.ShowTemperatureLimit,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperatureLimit"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
 				toggleStyle);
 			GUILayout.EndHorizontal();
 			Static.Settings.ShowTemperatureRate = GUILayout.Toggle(
 				Static.Settings.ShowTemperatureRate,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperatureRate"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
 				toggleStyle);
 			Static.Settings.ShowCriticalPart = GUILayout.Toggle(
 				Static.Settings.ShowCriticalPart,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowCriticalPartName"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowCriticalPartName"),
 				toggleStyle);
 			Static.Settings.HighlightCriticalPart = GUILayout.Toggle(
 				Static.Settings.HighlightCriticalPart,
-				Localizer.Format("#ModCriticalTemperatureGauge_HighlightCriticalPart"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_HighlightCriticalPart"),
 				toggleStyle);
 
 			// Drawing exclusion list settings controls
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.UseExclusionList = GUILayout.Toggle(
 				Static.Settings.UseExclusionList,
-				Localizer.Format("#ModCriticalTemperatureGauge_IgnorePartModules"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_IgnorePartModules"),
 				toggleStyle);
 			Static.Settings.ExclusionList = GUILayout.TextField(Static.Settings.ExclusionList, 512, textEditStyle);
 
@@ -117,18 +117,18 @@ namespace CriticalTemperatureGauge
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.PartMenuTemperature = GUILayout.Toggle(
 				Static.Settings.PartMenuTemperature,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperatureInPartMenu"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureInPartMenu"),
 				toggleStyle);
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(IndentWidth);
 			GUILayout.BeginVertical();
 			Static.Settings.PartMenuTemperatureLimit = GUILayout.Toggle(
 				Static.Settings.PartMenuTemperatureLimit,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperatureLimit"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
 				toggleStyle);
 			Static.Settings.PartMenuTemperatureRate = GUILayout.Toggle(
 				Static.Settings.PartMenuTemperatureRate,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowTemperatureRate"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
 				toggleStyle);
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
@@ -137,11 +137,11 @@ namespace CriticalTemperatureGauge
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.LockGaugeWindow = GUILayout.Toggle(
 				Static.Settings.LockGaugeWindow,
-				Localizer.Format("#ModCriticalTemperatureGauge_LockGaugePosition"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_LockGaugePosition"),
 				toggleStyle);
 			Static.Settings.ShowAppLauncherButton = GUILayout.Toggle(
 				Static.Settings.ShowAppLauncherButton,
-				Localizer.Format("#ModCriticalTemperatureGauge_ShowAppLauncherButton"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowAppLauncherButton"),
 				toggleStyle);
 			Static.AppLauncher?.Update();
 

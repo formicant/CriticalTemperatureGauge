@@ -2,16 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using KSP.Localization;
 using UnityEngine;
 
 namespace CriticalTemperatureGauge
 {
 	public class PartTemperatureState : PartModule
 	{
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#ModCriticalTemperatureGauge_PartMenuCore")]
+		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuCore")]
 		public string CoreTemperatureMenuLabel;
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#ModCriticalTemperatureGauge_PartMenuSkin")]
+		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuSkin")]
 		public string SkinTemperatureMenuLabel;
 
 		BaseField CoreTemperatureField { get; set; }
@@ -20,7 +19,7 @@ namespace CriticalTemperatureGauge
 		/// <summary>Moment of time the parameters were measured at.</summary>
 		public double Time { get; private set; }
 
-		/// <summary>Part short name.</summary>
+		/// <summary>Part localized name.</summary>
 		public string Title { get; private set; }
 
 		// Thermal parameters
@@ -47,7 +46,7 @@ namespace CriticalTemperatureGauge
 			StartCoroutine(InitValues());
 		}
 
-		public IEnumerator InitValues()
+		IEnumerator InitValues()
 		{
 			while(!HighLogic.LoadedSceneIsFlight || vessel.HoldPhysics)
 				yield return new WaitForFixedUpdate();
@@ -64,6 +63,34 @@ namespace CriticalTemperatureGauge
 			SkinTemperatureRate = 0;
 		}
 
+		public void Update()
+		{
+			if(HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics && Static.Settings.PartMenuTemperature)
+			{
+				// Updating the part menu values
+				CoreTemperatureMenuLabel =
+					Format.TemperatureWithRate(
+						CoreTemperature,
+						Static.Settings.PartMenuTemperatureLimit.Then(CoreTemperatureLimit),
+						Static.Settings.PartMenuTemperatureRate.Then(CoreTemperatureRate));
+				SkinTemperatureMenuLabel =
+					Format.TemperatureWithRate(
+						SkinTemperature,
+						Static.Settings.PartMenuTemperatureLimit.Then(SkinTemperatureLimit),
+						Static.Settings.PartMenuTemperatureRate.Then(SkinTemperatureRate));
+
+				CoreTemperatureField.guiActive = true;
+				SkinTemperatureField.guiActive = true;
+			}
+			else
+			{
+				CoreTemperatureMenuLabel = null;
+				SkinTemperatureMenuLabel = null;
+				CoreTemperatureField.guiActive = false;
+				SkinTemperatureField.guiActive = false;
+			}
+		}
+
 		public void FixedUpdate()
 		{
 			if(HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics)
@@ -72,40 +99,22 @@ namespace CriticalTemperatureGauge
 				double timeSpan = 2 * (newTime - Time);
 				if(Time > 0 && timeSpan > 0)
 				{
-					CoreTemperatureRate = (1D - CoreTemperatureRateSmoothing) * CoreTemperatureRate +
+					// Updating the temperature rate values
+					CoreTemperatureRate =
+						(1D - CoreTemperatureRateSmoothing) * CoreTemperatureRate +
 						CoreTemperatureRateSmoothing * (part.temperature - CoreTemperature) / timeSpan;
-					SkinTemperatureRate = (1D - SkinTemperatureRateSmoothing) * SkinTemperatureRate +
+					SkinTemperatureRate =
+						(1D - SkinTemperatureRateSmoothing) * SkinTemperatureRate +
 						SkinTemperatureRateSmoothing * (part.skinTemperature - SkinTemperature) / timeSpan;
 
 					CoreTemperature = part.temperature;
 					SkinTemperature = part.skinTemperature;
 					Time = newTime;
-
-					CoreTemperatureMenuLabel = Static.Settings.PartMenuTemperature
-						? $@"{
-							Localizer.Format(Static.Settings.PartMenuTemperatureLimit ? "#ModCriticalTemperatureGauge_TemperatureWithLimit" : "#ModCriticalTemperatureGauge_Temperature",
-								CoreTemperature.ToUnsignedString(4, 0),
-								CoreTemperatureLimit.ToUnsignedString(3, 0))}{
-							(Static.Settings.PartMenuTemperatureRate
-								? " " + Localizer.Format("#ModCriticalTemperatureGauge_TemperatureRate", CoreTemperatureRate.ToSignedString(3, 0))
-								: "")}"
-						: null;
-					SkinTemperatureMenuLabel = Static.Settings.PartMenuTemperature
-						? $@"{
-							Localizer.Format(Static.Settings.PartMenuTemperatureLimit ? "#ModCriticalTemperatureGauge_TemperatureWithLimit" : "#ModCriticalTemperatureGauge_Temperature",
-								SkinTemperature.ToUnsignedString(4, 0),
-								SkinTemperatureLimit.ToUnsignedString(3, 0))}{
-							(Static.Settings.PartMenuTemperatureRate
-								? " " + Localizer.Format("#ModCriticalTemperatureGauge_TemperatureRate", SkinTemperatureRate.ToSignedString(3, 0))
-								: "")}"
-						: null;
 				}
-				CoreTemperatureField.guiActive = Static.Settings.PartMenuTemperature;
-				SkinTemperatureField.guiActive = Static.Settings.PartMenuTemperature;
 			}
 		}
 
-		// Temperature rate value temporal smoothing.
+		// Temperature rate value temporal smoothing
 		const double CoreTemperatureRateSmoothing = 0.5;
 		const double SkinTemperatureRateSmoothing = 0.1;
 

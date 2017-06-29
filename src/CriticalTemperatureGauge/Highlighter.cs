@@ -18,16 +18,17 @@ namespace CriticalTemperatureGauge
 			Color.blue,
 		};
 
-		const int FlashPeriod = 4;
+		const double FlashPeriod = 0.166;
 
-		int _currentHighlightColor = 0;
-		Part _previousHighlightedPart = null;
+		double _lastColorChangeTime;
+		int _currentHighlightColor;
+		Part _previousHighlightedPart;
 
 		/// <summary>Returns whether there is a highlighted part.</summary>
 		public bool IsThereHighlightedPart { get; private set; }
 
 		/// <summary>Highlights a given part.</summary>
-		/// <param name="part">Part to higilight or <c>null</c>.</param>
+		/// <param name="part">Part to highlight or <c>null</c>.</param>
 		public void SetHighlightedPart(Part part)
 		{
 			IsThereHighlightedPart = part != null;
@@ -44,7 +45,7 @@ namespace CriticalTemperatureGauge
 			if(part != null)
 			{
 				part.SetHighlightDefault();
-				part.SetHighlight(false, false);
+				part.SetHighlight(active: false, recursive: false);
 			}
 		}
 
@@ -53,10 +54,16 @@ namespace CriticalTemperatureGauge
 			if(part != null)
 			{
 				part.highlightType = Part.HighlightType.AlwaysOn;
-				part.SetHighlightColor(HighlightColors[_currentHighlightColor / FlashPeriod]);
-				part.SetHighlight(true, false);
+				part.SetHighlightColor(HighlightColors[_currentHighlightColor]);
+				part.SetHighlight(active: true, recursive: false);
+				
+				var time = Planetarium.GetUniversalTime();
+				if(time - _lastColorChangeTime > FlashPeriod * TimeWarp.CurrentRate)
+				{
+					_currentHighlightColor = (_currentHighlightColor + 1) % HighlightColors.Length;
+					_lastColorChangeTime = time;
+				}
 			}
-			_currentHighlightColor = (_currentHighlightColor + 1) % (HighlightColors.Length * FlashPeriod);
 		}
 	}
 }

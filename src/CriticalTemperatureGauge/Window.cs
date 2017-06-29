@@ -29,10 +29,7 @@ namespace CriticalTemperatureGauge
 		Rect? _windowRectangle;
 		public Rect WindowRectangle
 		{
-			get
-			{
-				return _windowRectangle ?? (_windowRectangle = InitialWindowRectangle).Value;
-			}
+			get => _windowRectangle ?? (_windowRectangle = InitialWindowRectangle).Value;
 			private set
 			{
 				_windowRectangle = value;

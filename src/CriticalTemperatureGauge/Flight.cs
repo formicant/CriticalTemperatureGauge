@@ -80,14 +80,14 @@ namespace CriticalTemperatureGauge
 				if(!_gaugeWindow.IsLogicallyVisible &&
 					criticalPartState != null &&
 					(criticalPartState.Index > Static.Settings.GaugeShowingThreshold ||
-					Static.Settings.ForceShowGauge))
+					Static.Settings.AlwaysShowGauge))
 				{
 					_gaugeWindow.Show();
 				}
 				else if(_gaugeWindow.IsLogicallyVisible &&
 					(criticalPartState == null ||
 					criticalPartState.Index < Static.Settings.GaugeHidingThreshold &&
-					!Static.Settings.ForceShowGauge))
+					!Static.Settings.AlwaysShowGauge))
 				{
 					_gaugeWindow.Hide();
 				}

@@ -11,7 +11,7 @@ namespace CriticalTemperatureGauge
 	public static class Static
 	{
 		/// <summary>User-friendly name of the plugin.</summary>
-		public static readonly string PluginTitle = Localizer.Format("#ModCriticalTemperatureGauge_Title");
+		public static readonly string PluginTitle = Localizer.Format("#LOC_CriticalTemperatureGauge_Title");
 
 		/// <summary>Path to the Textures folder inside the add-on folder.</summary>
 		public const string TexturePath = nameof(CriticalTemperatureGauge) + "/Textures/";

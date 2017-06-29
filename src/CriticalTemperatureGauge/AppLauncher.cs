@@ -22,17 +22,15 @@ namespace CriticalTemperatureGauge
 		public void Update()
 		{
 			if(_appLauncherButton != null)
-				_appLauncherButton.VisibleInScenes = Static.Settings.ShowAppLauncherButton
-					? ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW
-					: ApplicationLauncher.AppScenes.NEVER;
+				_appLauncherButton.VisibleInScenes =
+					Static.Settings.ShowAppLauncherButton
+						? ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW
+						: ApplicationLauncher.AppScenes.NEVER;
 		}
 
 		public bool ButtonState
 		{
-			get
-			{
-				return _settingsWindow.IsLogicallyVisible;
-			}
+			get => _settingsWindow.IsLogicallyVisible;
 			set
 			{
 				if(value)
@@ -46,7 +44,6 @@ namespace CriticalTemperatureGauge
 
 		public void Start()
 		{
-			OnGUIApplicationLauncherReady();
 			Static.AppLauncher = this;
 		}
 

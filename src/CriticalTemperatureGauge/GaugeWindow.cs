@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KSP.Localization;
 using UnityEngine;
 
 namespace CriticalTemperatureGauge
@@ -69,22 +68,19 @@ namespace CriticalTemperatureGauge
 				// Drawing temperature and temperature limit values
 				if(Static.Settings.ShowTemperature)
 					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleCenter, FontSize,
-						Localizer.Format(Static.Settings.ShowTemperatureLimit ? "#ModCriticalTemperatureGauge_TemperatureWithLimit" : "#ModCriticalTemperatureGauge_Temperature",
-							Static.CriticalPartState.CriticalTemperature.ToUnsignedString(4, 0),
-							Static.CriticalPartState.CriticalTemperatureLimit.ToUnsignedString(3, 0)));
+						Format.Temperature(
+							Static.CriticalPartState.CriticalTemperature,
+							Static.Settings.ShowTemperatureLimit.Then(Static.CriticalPartState.CriticalTemperatureLimit)));
 
 				// Drawing temperature rate value
 				if(Static.Settings.ShowTemperatureRate)
 					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleLeft, FontSize,
-						"   " +
-						Localizer.Format("#ModCriticalTemperatureGauge_TemperatureRate", Static.CriticalPartState.CriticalTemperatureRate.ToSignedString(1, 0)));
+						Format.TemperatureRate(Static.CriticalPartState.CriticalTemperatureRate));
 
 				// Drawing critical part name
 				if(Static.Settings.ShowCriticalPart)
 					DrawContrastLabel(OuterLabelRectangle, TextAnchor.MiddleLeft, FontSize,
-						$@" {
-							Static.CriticalPartState.Title} ({
-							Localizer.Format(Static.CriticalPartState.IsSkinCritical ? "#ModCriticalTemperatureGauge_Skin" : "#ModCriticalTemperatureGauge_Core")})");
+						Format.PartName(Static.CriticalPartState.Title, Static.CriticalPartState.IsSkinCritical));
 
 				GUILayout.EndVertical();
 

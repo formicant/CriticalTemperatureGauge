@@ -32,22 +32,22 @@ namespace CriticalTemperatureGauge
 
 		// Gauge visibility settings
 
-		public bool ForceShowGauge { get; set; }
+		public bool AlwaysShowGauge { get; set; }
 
 		const double DefaultGaugeShowingThreshold = 0.5;
 		double _gaugeShowingThreshold;
 		public double GaugeShowingThreshold
 		{
-			get { return _gaugeShowingThreshold; }
-			set { _gaugeShowingThreshold = value > 0 && value < 1 ? value : DefaultGaugeShowingThreshold; }
+			get => _gaugeShowingThreshold;
+			set => _gaugeShowingThreshold = value > 0 && value < 1 ? value : DefaultGaugeShowingThreshold;
 		}
 
 		const double DefaultGaugeHidingThreshold = 0.4;
 		double _gaugeHidingThreshold;
 		public double GaugeHidingThreshold
 		{
-			get { return _gaugeHidingThreshold; }
-			set { _gaugeHidingThreshold = Math.Min(GaugeShowingThreshold, value > 0 && value < 1 ? value : DefaultGaugeHidingThreshold); }
+			get => _gaugeHidingThreshold;
+			set => _gaugeHidingThreshold = Math.Min(GaugeShowingThreshold, value > 0 && value < 1 ? value : DefaultGaugeHidingThreshold);
 		}
 
 		// Exclusion list settings
@@ -57,7 +57,7 @@ namespace CriticalTemperatureGauge
 		string _exclusionList;
 		public string ExclusionList
 		{
-			get { return _exclusionList; }
+			get => _exclusionList;
 			set
 			{
 				_exclusionList = value;
@@ -78,7 +78,7 @@ namespace CriticalTemperatureGauge
 			settings.SetValue(nameof(GaugeWindowPosition),      GaugeWindowPosition);
 			settings.SetValue(nameof(ShowAppLauncherButton),    ShowAppLauncherButton);
 			settings.SetValue(nameof(LockGaugeWindow),          LockGaugeWindow);
-			settings.SetValue(nameof(ForceShowGauge),           ForceShowGauge);
+			settings.SetValue(nameof(AlwaysShowGauge),           AlwaysShowGauge);
 			settings.SetValue(nameof(GaugeShowingThreshold),    GaugeShowingThreshold);
 			settings.SetValue(nameof(GaugeHidingThreshold),     GaugeHidingThreshold);
 			settings.SetValue(nameof(ShowTemperature),          ShowTemperature);
@@ -108,7 +108,7 @@ namespace CriticalTemperatureGauge
 				GaugeWindowPosition      = settings.GetValue(nameof(GaugeWindowPosition),      Vector2.zero),
 				ShowAppLauncherButton    = settings.GetValue(nameof(ShowAppLauncherButton),    true),
 				LockGaugeWindow          = settings.GetValue(nameof(LockGaugeWindow),          true),
-				ForceShowGauge           = settings.GetValue(nameof(ForceShowGauge),           false),
+				AlwaysShowGauge          = settings.GetValue(nameof(AlwaysShowGauge),          false),
 				GaugeShowingThreshold    = settings.GetValue(nameof(GaugeShowingThreshold),    DefaultGaugeShowingThreshold),
 				GaugeHidingThreshold     = settings.GetValue(nameof(GaugeHidingThreshold),     DefaultGaugeHidingThreshold),
 				ShowTemperature          = settings.GetValue(nameof(ShowTemperature),          true),
