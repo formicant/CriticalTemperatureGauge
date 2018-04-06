@@ -2,4 +2,5 @@
 /src/.vs
 /src/CriticalTemperatureGauge/obj
 /src/CriticalTemperatureGauge/bin
+*.suo
 *.user
