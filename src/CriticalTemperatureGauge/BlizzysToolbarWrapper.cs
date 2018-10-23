@@ -25,7 +25,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -219,6 +218,11 @@ namespace CriticalTemperatureGauge
 		{
 			get;
 		}
+		bool IsHovering
+		{
+			get;
+		}
+
 
 		/// <summary>
 		/// Whether this button is currently enabled (clickable) or not. This does not affect the player's ability to
@@ -679,6 +683,13 @@ namespace CriticalTemperatureGauge
 				return (bool)types.button.effectivelyVisibleProperty.GetValue(realButton, null);
 			}
 		}
+		public bool IsHovering
+		{
+			get
+			{
+				return (bool)types.button.isHoveringProperty.GetValue(realButton, null);
+			}
+		}
 
 		public bool Enabled
 		{
@@ -825,9 +836,8 @@ namespace CriticalTemperatureGauge
 		internal static Type getType(string name)
 		{
 			Type type = null;
-			AssemblyLoader.loadedAssemblies.TypeOperation(t =>
-			{
-				if (t.FullName == name)
+			AssemblyLoader.loadedAssemblies.TypeOperation(t => {
+				if(t.FullName == name)
 				{
 					type = t;
 				}
@@ -866,6 +876,7 @@ namespace CriticalTemperatureGauge
 		internal readonly PropertyInfo visibleProperty;
 		internal readonly PropertyInfo visibilityProperty;
 		internal readonly PropertyInfo effectivelyVisibleProperty;
+		internal readonly PropertyInfo isHoveringProperty;
 		internal readonly PropertyInfo enabledProperty;
 		internal readonly PropertyInfo importantProperty;
 		internal readonly PropertyInfo drawableProperty;
@@ -885,6 +896,8 @@ namespace CriticalTemperatureGauge
 			visibleProperty = ToolbarTypes.getProperty(iButtonType, "Visible");
 			visibilityProperty = ToolbarTypes.getProperty(iButtonType, "Visibility");
 			effectivelyVisibleProperty = ToolbarTypes.getProperty(iButtonType, "EffectivelyVisible");
+			isHoveringProperty = ToolbarTypes.getProperty(iButtonType, "IsHovering");
+
 			enabledProperty = ToolbarTypes.getProperty(iButtonType, "Enabled");
 			importantProperty = ToolbarTypes.getProperty(iButtonType, "Important");
 			drawableProperty = ToolbarTypes.getProperty(iButtonType, "Drawable");
