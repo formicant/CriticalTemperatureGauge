@@ -15,7 +15,9 @@ namespace CriticalTemperatureGauge
 		// Window settings
 		public Vector2 SettingsWindowPosition { get; set; }
 		public Vector2 GaugeWindowPosition { get; set; }
+		public float GaugeWindowScale { get; set; }
 		public bool ShowAppLauncherButton { get; set; }
+		public bool DockGaugeWindow { get; set; }
 		public bool LockGaugeWindow { get; set; }
 
 		// Additional information settings
@@ -76,9 +78,10 @@ namespace CriticalTemperatureGauge
 
 			settings.SetValue(nameof(SettingsWindowPosition),   SettingsWindowPosition);
 			settings.SetValue(nameof(GaugeWindowPosition),      GaugeWindowPosition);
-			settings.SetValue(nameof(ShowAppLauncherButton),    ShowAppLauncherButton);
+			settings.SetValue(nameof(GaugeWindowScale),         GaugeWindowScale);
+			settings.SetValue(nameof(DockGaugeWindow),          DockGaugeWindow);
 			settings.SetValue(nameof(LockGaugeWindow),          LockGaugeWindow);
-			settings.SetValue(nameof(AlwaysShowGauge),           AlwaysShowGauge);
+			settings.SetValue(nameof(AlwaysShowGauge),          AlwaysShowGauge);
 			settings.SetValue(nameof(GaugeShowingThreshold),    GaugeShowingThreshold);
 			settings.SetValue(nameof(GaugeHidingThreshold),     GaugeHidingThreshold);
 			settings.SetValue(nameof(ShowTemperature),          ShowTemperature);
@@ -106,7 +109,8 @@ namespace CriticalTemperatureGauge
 			{
 				SettingsWindowPosition   = settings.GetValue(nameof(SettingsWindowPosition),   Vector2.zero),
 				GaugeWindowPosition      = settings.GetValue(nameof(GaugeWindowPosition),      Vector2.zero),
-				ShowAppLauncherButton    = settings.GetValue(nameof(ShowAppLauncherButton),    true),
+				GaugeWindowScale         = settings.GetValue(nameof(GaugeWindowScale),         1),
+				DockGaugeWindow          = settings.GetValue(nameof(DockGaugeWindow),          true),
 				LockGaugeWindow          = settings.GetValue(nameof(LockGaugeWindow),          true),
 				AlwaysShowGauge          = settings.GetValue(nameof(AlwaysShowGauge),          false),
 				GaugeShowingThreshold    = settings.GetValue(nameof(GaugeShowingThreshold),    DefaultGaugeShowingThreshold),

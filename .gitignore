@@ -1,6 +1,6 @@
 /Releases
-/src/.vs
-/src/CriticalTemperatureGauge/obj
-/src/CriticalTemperatureGauge/bin
+/.vs
+/CriticalTemperatureGauge/obj
+/CriticalTemperatureGauge/bin
 *.suo
 *.user
