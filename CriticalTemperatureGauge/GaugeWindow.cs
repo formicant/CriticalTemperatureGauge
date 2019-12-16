@@ -17,9 +17,9 @@ namespace CriticalTemperatureGauge
 		static readonly Color TextColor = Color.white;
 		static readonly Color[] TextShadowColors =
 		{
+			new Color(0, 0, 0, 1.0F),
 			new Color(0, 0, 0, 0.8F),
-			new Color(0, 0, 0, 0.3F),
-			new Color(0, 0, 0, 0.2F),
+			new Color(0, 0, 0, 0.5F),
 		};
 
 		static readonly Rect GaugeFrameRectangle = new Rect(0, 0, 240, 24);
@@ -87,6 +87,7 @@ namespace CriticalTemperatureGauge
 					new Rect(0, 0, gaugeScaleValue * GaugeScaleNominalLength / GaugeScaleRectangle.width, 1));
 
 				int fontSize = (int)Math.Round(scale * FontSize);
+				FontStyle fontStyle = Static.Settings.UseBoldFont ? FontStyle.Bold : FontStyle.Normal;
 				var innerLabelRectangle = InnerLabelRectangle.Scale(scale);
 
 				// Drawing temperature and temperature limit values
@@ -95,6 +96,7 @@ namespace CriticalTemperatureGauge
 						innerLabelRectangle,
 						TextAnchor.MiddleCenter,
 						fontSize,
+						fontStyle,
 						Format.Temperature(
 							Static.CriticalPartState.CriticalTemperature,
 							Static.Settings.ShowTemperatureLimit.Then(Static.CriticalPartState.CriticalTemperatureLimit)));
@@ -105,6 +107,7 @@ namespace CriticalTemperatureGauge
 						innerLabelRectangle,
 						TextAnchor.MiddleLeft,
 						fontSize,
+						fontStyle,
 						Format.TemperatureRate(Static.CriticalPartState.CriticalTemperatureRate));
 
 				// Drawing critical part name
@@ -113,6 +116,7 @@ namespace CriticalTemperatureGauge
 						OuterLabelRectangle.Scale(scale),
 						TextAnchor.MiddleLeft,
 						fontSize,
+						FontStyle.Normal,
 						Format.PartName(Static.CriticalPartState.Title, Static.CriticalPartState.IsSkinCritical));
 
 				GUILayout.EndVertical();
@@ -127,12 +131,13 @@ namespace CriticalTemperatureGauge
 		/// <param name="alignment">Text alignment.</param>
 		/// <param name="fontSize">Font size.</param>
 		/// <param name="text">Text to draw.</param>
-		void DrawContrastLabel(Rect rectangle, TextAnchor alignment, int fontSize, string text)
+		void DrawContrastLabel(Rect rectangle, TextAnchor alignment, int fontSize, FontStyle fontStyle, string text)
 		{
 			var style = new GUIStyle(GUI.skin.label)
 			{
 				alignment = alignment,
 				fontSize = fontSize,
+				fontStyle = fontStyle,
 				wordWrap = false,
 			};
 

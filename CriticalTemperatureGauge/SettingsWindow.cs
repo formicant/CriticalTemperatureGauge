@@ -115,6 +115,10 @@ namespace CriticalTemperatureGauge
 				Static.Settings.ShowTemperatureRate,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
 				ToggleStyle);
+			Static.Settings.UseBoldFont = GUILayout.Toggle(
+				Static.Settings.UseBoldFont,
+				Localizer.Format("#LOC_CriticalTemperatureGauge_UseBoldFont"),
+				ToggleStyle);
 			Static.Settings.ShowCriticalPart = GUILayout.Toggle(
 				Static.Settings.ShowCriticalPart,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowCriticalPartName"),

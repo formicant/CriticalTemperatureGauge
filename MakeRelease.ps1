@@ -1,9 +1,10 @@
 $name = "CriticalTemperatureGauge"
-$srcDir = "GameData\$name"
+$srcDir = "GameData"
 $dstDir = "Releases"
 
-$verFile = Get-Content "$srcDir\$name.version" -Raw | ConvertFrom-Json
-$ver = $verFile.VERSION
+$verFile = "$srcDir\$name\$name.version"
+$verJson = Get-Content $verFile -Raw | ConvertFrom-Json
+$ver = $verJson.VERSION
 $verString = "$($ver.MAJOR).$($ver.MINOR).$($ver.PATCH).$($ver.BUILD)"
 
 $zipFile = "$dstDir\$name-$verString.zip"
@@ -13,4 +14,4 @@ If (Test-Path $zipFile) {
   Read-Host "Press Enter to overwrite or Ctrl+Break to quit"
 }
 
-Compress-Archive $srcDir $zipFile -Force -CompressionLevel Optimal
+Compress-Archive $srcDir $zipFile -Force
