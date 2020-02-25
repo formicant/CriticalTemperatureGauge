@@ -35,9 +35,9 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Lib\1.8.1\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\_Lib\1.9.0\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="ClickThroughBlocker, Version=0.1.9.3, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClickThroughBlocker, Version=0.1.9.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\_Lib\Mods\ClickThroughBlocker.dll</HintPath>
     </Reference>
@@ -50,15 +50,15 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Lib\1.8.1\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\_Lib\1.9.0\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Lib\1.8.1\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\_Lib\1.9.0\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_Lib\1.8.1\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\..\_Lib\1.9.0\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
