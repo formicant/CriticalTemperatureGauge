@@ -6,7 +6,7 @@ using KSP.Localization;
 
 namespace CriticalTemperatureGauge
 {
-	internal static class Format
+	static class Format
 	{
 		public static string Temperature(double temperature, double? temperatureLimit) =>
 			temperatureLimit.HasValue
@@ -23,12 +23,6 @@ namespace CriticalTemperatureGauge
 
 		public static string PartName(string partName, bool isSkin) =>
 			$" {partName} ({(isSkin ? Skin : Core)})";
-
-
-		public static T? Then<T>(this bool condition, T thenValue)
-			where T : struct
-			=>
-			condition ? thenValue : (T?)null;
 
 
 		static string ToUnsignedString(this double value, int intPlaces)

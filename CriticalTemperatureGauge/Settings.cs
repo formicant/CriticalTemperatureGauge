@@ -15,13 +15,16 @@ namespace CriticalTemperatureGauge
 		// Window settings
 		public Vector2 SettingsWindowPosition { get; set; }
 		public Vector2 GaugeWindowPosition { get; set; }
+		public float GaugeWindowScale { get; set; }
 		public bool ShowAppLauncherButton { get; set; }
+		public bool DockGaugeWindow { get; set; }
 		public bool LockGaugeWindow { get; set; }
 
 		// Additional information settings
 		public bool ShowTemperature { get; set; }
 		public bool ShowTemperatureLimit { get; set; }
 		public bool ShowTemperatureRate { get; set; }
+		public bool UseBoldFont { get; set; }
 		public bool ShowCriticalPart { get; set; }
 		public bool HighlightCriticalPart { get; set; }
 
@@ -39,15 +42,17 @@ namespace CriticalTemperatureGauge
 		public double GaugeShowingThreshold
 		{
 			get => _gaugeShowingThreshold;
-			set => _gaugeShowingThreshold = value > 0 && value < 1 ? value : DefaultGaugeShowingThreshold;
+			set => _gaugeShowingThreshold =
+				value > 0 && value < 1 ? value : DefaultGaugeShowingThreshold;
 		}
 
-		const double DefaultGaugeHidingThreshold = 0.4;
+		const double DefaultGaugeHidingThreshold = 0.45;
 		double _gaugeHidingThreshold;
 		public double GaugeHidingThreshold
 		{
 			get => _gaugeHidingThreshold;
-			set => _gaugeHidingThreshold = Math.Min(GaugeShowingThreshold, value > 0 && value < 1 ? value : DefaultGaugeHidingThreshold);
+			set => _gaugeHidingThreshold =
+				Math.Min(GaugeShowingThreshold, value > 0 && value < 1 ? value : DefaultGaugeHidingThreshold);
 		}
 
 		// Exclusion list settings
@@ -76,14 +81,16 @@ namespace CriticalTemperatureGauge
 
 			settings.SetValue(nameof(SettingsWindowPosition),   SettingsWindowPosition);
 			settings.SetValue(nameof(GaugeWindowPosition),      GaugeWindowPosition);
-			settings.SetValue(nameof(ShowAppLauncherButton),    ShowAppLauncherButton);
+			settings.SetValue(nameof(GaugeWindowScale),         GaugeWindowScale);
+			settings.SetValue(nameof(DockGaugeWindow),          DockGaugeWindow);
 			settings.SetValue(nameof(LockGaugeWindow),          LockGaugeWindow);
-			settings.SetValue(nameof(AlwaysShowGauge),           AlwaysShowGauge);
+			settings.SetValue(nameof(AlwaysShowGauge),          AlwaysShowGauge);
 			settings.SetValue(nameof(GaugeShowingThreshold),    GaugeShowingThreshold);
 			settings.SetValue(nameof(GaugeHidingThreshold),     GaugeHidingThreshold);
 			settings.SetValue(nameof(ShowTemperature),          ShowTemperature);
 			settings.SetValue(nameof(ShowTemperatureLimit),     ShowTemperatureLimit);
 			settings.SetValue(nameof(ShowTemperatureRate),      ShowTemperatureRate);
+			settings.SetValue(nameof(UseBoldFont),              UseBoldFont);
 			settings.SetValue(nameof(ShowCriticalPart),         ShowCriticalPart);
 			settings.SetValue(nameof(HighlightCriticalPart),    HighlightCriticalPart);
 			settings.SetValue(nameof(PartMenuTemperature),      PartMenuTemperature);
@@ -106,7 +113,8 @@ namespace CriticalTemperatureGauge
 			{
 				SettingsWindowPosition   = settings.GetValue(nameof(SettingsWindowPosition),   Vector2.zero),
 				GaugeWindowPosition      = settings.GetValue(nameof(GaugeWindowPosition),      Vector2.zero),
-				ShowAppLauncherButton    = settings.GetValue(nameof(ShowAppLauncherButton),    true),
+				GaugeWindowScale         = settings.GetValue(nameof(GaugeWindowScale),         1),
+				DockGaugeWindow          = settings.GetValue(nameof(DockGaugeWindow),          true),
 				LockGaugeWindow          = settings.GetValue(nameof(LockGaugeWindow),          true),
 				AlwaysShowGauge          = settings.GetValue(nameof(AlwaysShowGauge),          false),
 				GaugeShowingThreshold    = settings.GetValue(nameof(GaugeShowingThreshold),    DefaultGaugeShowingThreshold),
@@ -114,6 +122,7 @@ namespace CriticalTemperatureGauge
 				ShowTemperature          = settings.GetValue(nameof(ShowTemperature),          true),
 				ShowTemperatureLimit     = settings.GetValue(nameof(ShowTemperatureLimit),     true),
 				ShowTemperatureRate      = settings.GetValue(nameof(ShowTemperatureRate),      true),
+				UseBoldFont              = settings.GetValue(nameof(UseBoldFont),              true),
 				ShowCriticalPart         = settings.GetValue(nameof(ShowCriticalPart),         true),
 				HighlightCriticalPart    = settings.GetValue(nameof(HighlightCriticalPart),    true),
 				PartMenuTemperature      = settings.GetValue(nameof(PartMenuTemperature),      true),

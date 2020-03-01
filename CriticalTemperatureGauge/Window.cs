@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using ClickThroughFix;
 
 namespace CriticalTemperatureGauge
 {
@@ -16,6 +17,9 @@ namespace CriticalTemperatureGauge
 
 		/// <summary>Is the background of the window transparent.</summary>
 		public bool HasClearBackground { get; }
+
+		/// <summary>Do not use ClickThroughBlocker.</summary>
+		public bool ClickThrough { get; }
 
 		/// <summary>Should the window be visible? (Disregarding the F2 key.)</summary>
 		public bool IsLogicallyVisible { get; private set; }
@@ -37,13 +41,15 @@ namespace CriticalTemperatureGauge
 			}
 		}
 
+		protected virtual Vector2? ConstWindowPosition => null;
 		protected virtual Vector2? ConstWindowSize => null;
 
-		protected Window(int windowId, string title = "", bool hasClearBackground = false)
+		protected Window(int windowId, string title = "", bool hasClearBackground = false, bool clickThrough = false)
 		{
 			WindowId = windowId;
 			Title = title;
 			HasClearBackground = hasClearBackground;
+			ClickThrough = clickThrough;
 		}
 
 		protected abstract GUISkin Skin { get; }
@@ -71,10 +77,12 @@ namespace CriticalTemperatureGauge
 				var backgroundColor = GUI.backgroundColor;
 				if(HasClearBackground)
 					GUI.backgroundColor = Color.clear;
-				var windowRectangle = GUILayout.Window(WindowId, WindowRectangle, WindowGUI, Title);
-				WindowRectangle = ConstWindowSize.HasValue
-					? new Rect(windowRectangle.position, ConstWindowSize.Value)
-					: windowRectangle;
+				var windowRectangle = ClickThrough
+					? GUILayout.Window(WindowId, WindowRectangle, WindowGUI, Title)
+					: ClickThruBlocker﻿.GUILayoutWindow(WindowId, WindowRectangle, WindowGUI, Title);
+				WindowRectangle = new Rect(
+					ConstWindowPosition ?? windowRectangle.position,
+					ConstWindowSize ?? windowRectangle.size);
 				GUI.backgroundColor = backgroundColor;
 			}
 		}

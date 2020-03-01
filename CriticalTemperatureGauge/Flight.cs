@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using KSP.UI.Screens;
+using ToolbarControl_NS;
 
 namespace CriticalTemperatureGauge
 {
@@ -13,14 +15,50 @@ namespace CriticalTemperatureGauge
 	{
 		readonly Window _gaugeWindow = new GaugeWindow();
 		readonly Highlighter _highlighter = new Highlighter();
-		readonly BlizzysToolbar _toolbar = new BlizzysToolbar();
+		readonly SettingsWindow _settingsWindow = new SettingsWindow();
+		ToolbarControl _toolbarControl;
+
+		// Toolbar control:
+
+		void CreateToolbarControl()
+		{
+			if(_toolbarControl == null)
+			{
+				_toolbarControl = gameObject.AddComponent<ToolbarControl>();
+				_toolbarControl.AddToAllToolbars(
+					onTrue: OnButtonToggle,
+					onFalse: OnButtonToggle,
+					visibleInScenes: ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW,
+					nameSpace: Static.PluginId,
+					toolbarId: $"{Static.PluginId}Settings",
+					largeToolbarIcon: $"{Static.TexturePath}ToolbarIcon-57",
+          smallToolbarIcon: $"{Static.TexturePath}ToolbarIcon-24",
+					toolTip: Static.PluginTitle);
+			}
+		}
+
+		void DestroyToolbarControl()
+		{
+			if(_toolbarControl != null)
+			{
+				_toolbarControl.OnDestroy();
+				Destroy(_toolbarControl);
+				_toolbarControl = null;
+			}
+		}
+
+		void OnButtonToggle()
+		{
+			_toolbarControl.SetFalse(makeCall: false);
+			_settingsWindow.Toggle();
+		}
 
 		// KSP events:
 
 		public void Start()
 		{
-			Debug.Log($"{nameof(CriticalTemperatureGauge)}: Entering scene {HighLogic.LoadedScene}.");
-			_toolbar.Start();
+			Debug.Log($"{Static.PluginId}: Entering scene {HighLogic.LoadedScene}.");
+			CreateToolbarControl();
 		}
 
 		public void Awake()
@@ -36,40 +74,40 @@ namespace CriticalTemperatureGauge
 				Static.Settings.Save();
 				GameEvents.onShowUI.Remove(OnShowUI);
 				GameEvents.onHideUI.Remove(OnHideUI);
-				_gaugeWindow?.Hide();
+				_gaugeWindow.Hide();
+				_settingsWindow.Hide();
 				Static.CriticalPartState = null;
-				_toolbar.Destroy();
-				if(Static.AppLauncher != null)
-					Static.AppLauncher.ButtonState = false;
-				Debug.Log($"{nameof(CriticalTemperatureGauge)}: Exiting scene {HighLogic.LoadedScene}.");
+				DestroyToolbarControl();
+				Debug.Log($"{Static.PluginId}: Exiting scene {HighLogic.LoadedScene}.");
 			}
 			catch(Exception exception)
 			{
-				Debug.Log($"{nameof(CriticalTemperatureGauge)}: Exception during exiting scene {HighLogic.LoadedScene}: {exception}");
+				Debug.Log($"{Static.PluginId}: Exception during exiting scene {HighLogic.LoadedScene}: {exception}");
 			}
 		}
 
 		void OnShowUI()
 		{
-			if(_gaugeWindow != null)
-				_gaugeWindow.CanShow = true;
+			_gaugeWindow.CanShow = true;
+			_settingsWindow.CanShow = true;
 		}
 
 		void OnHideUI()
 		{
-			if(_gaugeWindow != null)
-				_gaugeWindow.CanShow = false;
+			_gaugeWindow.CanShow = false;
+			_settingsWindow.CanShow = false;
 		}
 
 		public void OnGUI()
 		{
-			_gaugeWindow?.DrawGUI();
+			_gaugeWindow.DrawGUI();
+			_settingsWindow.DrawGUI();
 		}
 
 		public void Update()
 		{
 			var vessel = FlightGlobals.ActiveVessel;
-			if(_gaugeWindow != null && vessel != null)
+			if(vessel != null)
 			{
 				// Updating critical part state
 				var criticalPartState = GetCriticalPartState(vessel);

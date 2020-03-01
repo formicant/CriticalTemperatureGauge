@@ -13,73 +13,110 @@ namespace CriticalTemperatureGauge
 		// Resources and layout
 		static readonly Texture2D GaugeFrameTexture = GameDatabase.Instance.GetTexture(Static.TexturePath + "GaugeFrame", false);
 		static readonly Texture2D GaugeScaleTexture = GameDatabase.Instance.GetTexture(Static.TexturePath + "GaugeScale", false);
+
 		static readonly Color TextColor = Color.white;
 		static readonly Color[] TextShadowColors =
 		{
+			new Color(0, 0, 0, 1.0F),
 			new Color(0, 0, 0, 0.8F),
-			new Color(0, 0, 0, 0.3F),
-			new Color(0, 0, 0, 0.2F),
+			new Color(0, 0, 0, 0.5F),
 		};
-		static readonly Rect GaugeFrameRectangle = new Rect(0, 0, GaugeFrameTexture.width, GaugeFrameTexture.height);
-		static readonly Rect GaugeScaleRectangle = new Rect(6, 4, GaugeScaleTexture.width, 12);
-		static readonly Rect InnerLabelRectangle = new Rect(0, 1, GaugeFrameTexture.width, GaugeFrameTexture.height);
-		static readonly Rect OuterLabelRectangle = new Rect(0, GaugeFrameTexture.height - 3, GaugeFrameTexture.width, GaugeFrameTexture.height);
-		const int FontSize = 12;
 
-		protected override GUISkin Skin => HighLogic.Skin;
+		static readonly Rect GaugeFrameRectangle = new Rect(0, 0, 240, 24);
+		static readonly Rect GaugeScaleRectangle = new Rect(8, 5, 232, 14);
+		static readonly Rect InnerLabelRectangle = new Rect(0, 0, 240, 24);
+		static readonly Rect OuterLabelRectangle = new Rect(0, 19, 240, 24);
+		static readonly Vector2 WindowSize = new Vector2(240, 40);
+		const int GaugeScaleNominalLength = 224;
 
-		private Vector2? _constWindowSize;
-		protected override Vector2? ConstWindowSize =>
-			_constWindowSize ?? (_constWindowSize = new Vector2(GaugeFrameTexture.width, 36));
+		const float FontSize = 14;
+
+		protected override GUISkin Skin => GUI.skin;
+
+		float AltimeterScale => GameSettings.UI_SCALE * GameSettings.UI_SCALE_ALTIMETER;
+		float Scale => AltimeterScale * Static.Settings.GaugeWindowScale;
+
+		Vector2 DockPosition => new Vector2(Screen.width / 2, AltimeterScale * 83);
+
+		protected override Vector2? ConstWindowPosition =>
+			Static.Settings.LockGaugeWindow
+				? (Static.Settings.DockGaugeWindow ? DockPosition : Static.Settings.GaugeWindowPosition) +
+					Scale * WindowSize.x / 2 * Vector2.left
+				: (Vector2?)null;
+
+		protected override Vector2? ConstWindowSize => Scale * WindowSize;
 
 		protected override Rect InitialWindowRectangle =>
 			new Rect(
-				Static.Settings.GaugeWindowPosition != Vector2.zero
-					? Static.Settings.GaugeWindowPosition
-					: new Vector2((Screen.width - GaugeFrameTexture.width) / 2, 83),
+				DockPosition - new Vector2(Scale * 120, 0),
 				ConstWindowSize.Value);
 
 		/// <summary>Creates the temperature gauge window.</summary>
 		public GaugeWindow()
-			: base(Static.BaseWindowId + 0, hasClearBackground: true) { }
+			: base(Static.BaseWindowId + 0, hasClearBackground: true, clickThrough: true) { }
 
 		/// <summary>Writes current window position into settings.</summary>
 		protected override void OnWindowRectUpdated()
 		{
-			Static.Settings.GaugeWindowPosition = WindowRectangle.position;
+			Static.Settings.GaugeWindowPosition = Static.Settings.DockGaugeWindow
+				? DockPosition
+				: WindowRectangle.position + Scale * WindowSize.x / 2 * Vector2.right;
 		}
 
 		/// <summary>Draws the window contents.</summary>
 		/// <param name="windowId">Id of the window.</param>
 		protected override void WindowGUI(int windowId)
 		{
+			var scale = Scale;
+
 			if(Static.CriticalPartState != null)
 			{
 				float gaugeScaleValue = (float)Static.CriticalPartState.Index;
-
+				
 				GUILayout.BeginVertical();
 
 				// Drawing gauge
-				GUI.DrawTexture(GaugeFrameRectangle, GaugeFrameTexture);
+				GUI.DrawTexture(GaugeFrameRectangle.Scale(scale), GaugeFrameTexture);
 				GUI.DrawTextureWithTexCoords(
-					new Rect(GaugeScaleRectangle.x, GaugeScaleRectangle.y, GaugeScaleRectangle.width * gaugeScaleValue, GaugeScaleRectangle.height),
-					GaugeScaleTexture, new Rect(0, 0, gaugeScaleValue, 1));
+					new Rect(
+						scale * GaugeScaleRectangle.x,
+						scale * GaugeScaleRectangle.y,
+						scale * GaugeScaleNominalLength * gaugeScaleValue,
+						scale * GaugeScaleRectangle.height),
+					GaugeScaleTexture,
+					new Rect(0, 0, gaugeScaleValue * GaugeScaleNominalLength / GaugeScaleRectangle.width, 1));
+
+				int fontSize = (int)Math.Round(scale * FontSize);
+				FontStyle fontStyle = Static.Settings.UseBoldFont ? FontStyle.Bold : FontStyle.Normal;
+				var innerLabelRectangle = InnerLabelRectangle.Scale(scale);
 
 				// Drawing temperature and temperature limit values
 				if(Static.Settings.ShowTemperature)
-					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleCenter, FontSize,
+					DrawContrastLabel(
+						innerLabelRectangle,
+						TextAnchor.MiddleCenter,
+						fontSize,
+						fontStyle,
 						Format.Temperature(
 							Static.CriticalPartState.CriticalTemperature,
 							Static.Settings.ShowTemperatureLimit.Then(Static.CriticalPartState.CriticalTemperatureLimit)));
 
 				// Drawing temperature rate value
 				if(Static.Settings.ShowTemperatureRate)
-					DrawContrastLabel(InnerLabelRectangle, TextAnchor.MiddleLeft, FontSize,
+					DrawContrastLabel(
+						innerLabelRectangle,
+						TextAnchor.MiddleLeft,
+						fontSize,
+						fontStyle,
 						Format.TemperatureRate(Static.CriticalPartState.CriticalTemperatureRate));
 
 				// Drawing critical part name
 				if(Static.Settings.ShowCriticalPart)
-					DrawContrastLabel(OuterLabelRectangle, TextAnchor.MiddleLeft, FontSize,
+					DrawContrastLabel(
+						OuterLabelRectangle.Scale(scale),
+						TextAnchor.MiddleLeft,
+						fontSize,
+						FontStyle.Normal,
 						Format.PartName(Static.CriticalPartState.Title, Static.CriticalPartState.IsSkinCritical));
 
 				GUILayout.EndVertical();
@@ -94,12 +131,13 @@ namespace CriticalTemperatureGauge
 		/// <param name="alignment">Text alignment.</param>
 		/// <param name="fontSize">Font size.</param>
 		/// <param name="text">Text to draw.</param>
-		void DrawContrastLabel(Rect rectangle, TextAnchor alignment, int fontSize, string text)
+		void DrawContrastLabel(Rect rectangle, TextAnchor alignment, int fontSize, FontStyle fontStyle, string text)
 		{
 			var style = new GUIStyle(GUI.skin.label)
 			{
 				alignment = alignment,
 				fontSize = fontSize,
+				fontStyle = fontStyle,
 				wordWrap = false,
 			};
 
