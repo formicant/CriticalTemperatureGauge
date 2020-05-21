@@ -69,7 +69,7 @@ namespace CriticalTemperatureGauge
 		{
 			var scale = Scale;
 
-			if(Static.CriticalPartState != null)
+			if(Static.CriticalPartState is object)
 			{
 				float gaugeScaleValue = (float)Static.CriticalPartState.Index;
 				

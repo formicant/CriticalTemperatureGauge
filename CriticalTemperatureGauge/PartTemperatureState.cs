@@ -8,9 +8,9 @@ namespace CriticalTemperatureGauge
 {
 	public class PartTemperatureState : PartModule
 	{
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuCore")]
+		[KSPField(category = Static.FieldCategory, isPersistant = false, guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuCore")]
 		public string CoreTemperatureMenuLabel;
-		[KSPField(guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuSkin")]
+		[KSPField(category = Static.FieldCategory, isPersistant = false, guiActive = true, guiActiveEditor = false, guiName = "#LOC_CriticalTemperatureGauge_PartMenuSkin")]
 		public string SkinTemperatureMenuLabel;
 
 		BaseField CoreTemperatureField { get; set; }

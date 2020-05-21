@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Wrappers.ClickThroughFix;
 using UnityEngine;
-using ClickThroughFix;
 
 namespace CriticalTemperatureGauge
 {
@@ -79,7 +79,7 @@ namespace CriticalTemperatureGauge
 					GUI.backgroundColor = Color.clear;
 				var windowRectangle = ClickThrough
 					? GUILayout.Window(WindowId, WindowRectangle, WindowGUI, Title)
-					: ClickThruBlocker﻿.GUILayoutWindow(WindowId, WindowRectangle, WindowGUI, Title);
+					: ClickThruBlocker.GUILayoutWindow(WindowId, WindowRectangle, WindowGUI, Title);
 				WindowRectangle = new Rect(
 					ConstWindowPosition ?? windowRectangle.position,
 					ConstWindowSize ?? windowRectangle.size);

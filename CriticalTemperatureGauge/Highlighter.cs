@@ -31,7 +31,7 @@ namespace CriticalTemperatureGauge
 		/// <param name="part">Part to highlight or <c>null</c>.</param>
 		public void SetHighlightedPart(Part part)
 		{
-			IsThereHighlightedPart = part != null;
+			IsThereHighlightedPart = part is object;
 			if(part != _previousHighlightedPart)
 			{
 				ResetPartHighlight(_previousHighlightedPart);
@@ -42,7 +42,7 @@ namespace CriticalTemperatureGauge
 
 		void ResetPartHighlight(Part part)
 		{
-			if(part != null)
+			if(part is object)
 			{
 				part.SetHighlightDefault();
 				part.SetHighlight(active: false, recursive: false);
@@ -51,7 +51,7 @@ namespace CriticalTemperatureGauge
 
 		void SetPartHighlight(Part part)
 		{
-			if(part != null)
+			if(part is object)
 			{
 				part.highlightType = Part.HighlightType.AlwaysOn;
 				part.SetHighlightColor(HighlightColors[_currentHighlightColor]);

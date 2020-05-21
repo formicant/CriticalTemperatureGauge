@@ -16,6 +16,9 @@ namespace CriticalTemperatureGauge
 		/// <summary>User-friendly name of the plugin.</summary>
 		public static readonly string PluginTitle = Localizer.Format("#LOC_CriticalTemperatureGauge_Title");
 
+		/// <summary>Part module field category id.</summary>
+		public const string FieldCategory = "Temperature";
+
 		/// <summary>Path to the Textures folder inside the add-on folder.</summary>
 		public const string TexturePath = PluginId + "/Textures/";
 

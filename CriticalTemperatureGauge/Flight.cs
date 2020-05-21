@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KSP.UI.Screens;
-using ToolbarControl_NS;
+using Wrappers.ToolbarControl_NS;
 
 namespace CriticalTemperatureGauge
 {
 	/// <summary>
 	/// Main add-on class.
 	/// </summary>
-	[KSPAddon(KSPAddon.Startup.Flight, false)]
+	[KSPAddon(KSPAddon.Startup.Flight, once: false)]
 	public class Flight : MonoBehaviour
 	{
 		readonly Window _gaugeWindow = new GaugeWindow();
@@ -22,7 +22,7 @@ namespace CriticalTemperatureGauge
 
 		void CreateToolbarControl()
 		{
-			if(_toolbarControl == null)
+			if(_toolbarControl is null)
 			{
 				_toolbarControl = gameObject.AddComponent<ToolbarControl>();
 				_toolbarControl.AddToAllToolbars(
@@ -39,7 +39,7 @@ namespace CriticalTemperatureGauge
 
 		void DestroyToolbarControl()
 		{
-			if(_toolbarControl != null)
+			if(_toolbarControl is object)
 			{
 				_toolbarControl.OnDestroy();
 				Destroy(_toolbarControl);
@@ -49,7 +49,7 @@ namespace CriticalTemperatureGauge
 
 		void OnButtonToggle()
 		{
-			_toolbarControl.SetFalse(makeCall: false);
+			_toolbarControl.SetFalse();
 			_settingsWindow.Toggle();
 		}
 
@@ -57,7 +57,7 @@ namespace CriticalTemperatureGauge
 
 		public void Start()
 		{
-			Debug.Log($"{Static.PluginId}: Entering scene {HighLogic.LoadedScene}.");
+			Debug.Log($"[{Static.PluginId}]: Entering scene {HighLogic.LoadedScene}.");
 			CreateToolbarControl();
 		}
 
@@ -78,11 +78,11 @@ namespace CriticalTemperatureGauge
 				_settingsWindow.Hide();
 				Static.CriticalPartState = null;
 				DestroyToolbarControl();
-				Debug.Log($"{Static.PluginId}: Exiting scene {HighLogic.LoadedScene}.");
+				Debug.Log($"[{Static.PluginId}]: Exiting scene {HighLogic.LoadedScene}.");
 			}
 			catch(Exception exception)
 			{
-				Debug.Log($"{Static.PluginId}: Exception during exiting scene {HighLogic.LoadedScene}: {exception}");
+				Debug.Log($"[{Static.PluginId}]: Exception during exiting scene {HighLogic.LoadedScene}: {exception}");
 			}
 		}
 
@@ -100,30 +100,41 @@ namespace CriticalTemperatureGauge
 
 		public void OnGUI()
 		{
+			if(_firstGuiDrawing)
+				InitiateGui();
 			_gaugeWindow.DrawGUI();
 			_settingsWindow.DrawGUI();
 		}
 
+		// Forcing a GUI element to appear once during scene loading
+		// to prevent a delay during flight.
+		void InitiateGui()
+		{
+			_firstGuiDrawing = false;
+			GUILayout.Window(Static.BaseWindowId - 1, new Rect(), id => { }, " ");
+		}
+
+		static bool _firstGuiDrawing = true;
+
 		public void Update()
 		{
 			var vessel = FlightGlobals.ActiveVessel;
-			if(vessel != null)
+			if(vessel is object)
 			{
 				// Updating critical part state
 				var criticalPartState = GetCriticalPartState(vessel);
-				//criticalPartState?.UpdateTemperatureRates(Static.CriticalPartState);
 				Static.CriticalPartState = criticalPartState;
 
 				// Determining if the gauge should be shown or hidden
 				if(!_gaugeWindow.IsLogicallyVisible &&
-					criticalPartState != null &&
+					criticalPartState is object &&
 					(criticalPartState.Index > Static.Settings.GaugeShowingThreshold ||
 					Static.Settings.AlwaysShowGauge))
 				{
 					_gaugeWindow.Show();
 				}
 				else if(_gaugeWindow.IsLogicallyVisible &&
-					(criticalPartState == null ||
+					(criticalPartState is null ||
 					criticalPartState.Index < Static.Settings.GaugeHidingThreshold &&
 					!Static.Settings.AlwaysShowGauge))
 				{
@@ -133,7 +144,7 @@ namespace CriticalTemperatureGauge
 				// Highlighting the critical part if needed
 				_highlighter.SetHighlightedPart(
 					Static.Settings.HighlightCriticalPart &&
-					criticalPartState != null &&
+					criticalPartState is object &&
 					(_highlighter.IsThereHighlightedPart &&
 					criticalPartState.Index > Static.Settings.GaugeHidingThreshold ||
 					criticalPartState.Index > Static.Settings.GaugeShowingThreshold)
@@ -153,11 +164,16 @@ namespace CriticalTemperatureGauge
 				.OrderByDescending(partState => partState.Index)
 				.FirstOrDefault();
 
-		/// <summary>Gets parameters of a part.</summary>
+		/// <summary>Gets parameters of a part. Adds TemperatureState module to the part if absent.</summary>
 		/// <param name="part">A vessel part.</param>
 		/// <returns>Part state.</returns>
-		static PartTemperatureState GetPartState(Part part) =>
-			part.Modules.GetModules<PartTemperatureState>().FirstOrDefault();
+		static PartTemperatureState GetPartState(Part part)
+		{
+			var partTemperatureState = part.Modules.GetModules<PartTemperatureState>().FirstOrDefault();
+			if(partTemperatureState is null)
+				part.AddModule(nameof(PartTemperatureState));
+			return partTemperatureState;
+		}
 
 		/// <summary>Determines if the part has a module containing in the exclusion list.</summary>
 		/// <param name="part">A vessel part.</param>

@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
-using ToolbarControl_NS;
+using Wrappers.ToolbarControl_NS;
 
 namespace CriticalTemperatureGauge
 {
 	[KSPAddon(KSPAddon.Startup.MainMenu, once: true)]
 	public class RegisterToolbar : MonoBehaviour
 	{
-		void Start()
-		{
+		void Start() =>
 			ToolbarControl.RegisterMod(Static.PluginId, Static.PluginTitle);
-		}
 	}
 }
