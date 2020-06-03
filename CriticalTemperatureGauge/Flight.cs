@@ -121,6 +121,12 @@ namespace CriticalTemperatureGauge
 			var vessel = FlightGlobals.ActiveVessel;
 			if(vessel is object)
 			{
+				if(Static.Settings.ExclusionListChanged)
+				{
+					Static.Settings.ExclusionListChanged = false;
+					UpdateExcludedParts(vessel);
+				}
+
 				// Updating critical part state
 				var criticalPartState = GetCriticalPartState(vessel);
 				Static.CriticalPartState = criticalPartState;
@@ -153,14 +159,23 @@ namespace CriticalTemperatureGauge
 			}
 		}
 
+		static void UpdateExcludedParts(Vessel vessel)
+		{
+			foreach(var part in GetPartTemperatureStates(vessel))
+				part.UpdateExclusionStatus();
+		}
+
+		static IEnumerable<PartTemperatureState> GetPartTemperatureStates(Vessel vessel) =>
+			vessel.parts
+				.Select(GetPartState)
+				.OfType<PartTemperatureState>();
+
 		/// <summary>Finds the part with the greatest Temp/TempLimit ratio.</summary>
 		/// <param name="vessel">Current vessel.</param>
 		/// <returns>Critical part state.</returns>
 		static PartTemperatureState GetCriticalPartState(Vessel vessel) =>
-			vessel.parts
-				.Where(IsPartNotIgnored)
-				.Select(GetPartState)
-				.OfType<PartTemperatureState>()
+			GetPartTemperatureStates(vessel)
+				.Where(part => part.IsNotIgnored)
 				.OrderByDescending(partState => partState.Index)
 				.FirstOrDefault();
 
@@ -174,12 +189,5 @@ namespace CriticalTemperatureGauge
 				part.AddModule(nameof(PartTemperatureState));
 			return partTemperatureState;
 		}
-
-		/// <summary>Determines if the part has a module containing in the exclusion list.</summary>
-		/// <param name="part">A vessel part.</param>
-		/// <returns><c>false</c> if the part is ignored; <c>true</c> otherwise.</returns>
-		static bool IsPartNotIgnored(Part part) =>
-			!(Static.Settings.UseExclusionList &&
-				Static.Settings.ExclusionListItems.Any(moduleName => part.Modules.Contains(moduleName)));
 	}
 }

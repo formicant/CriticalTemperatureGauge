@@ -30,7 +30,7 @@ namespace CriticalTemperatureGauge
 
 		static GUIStyle _textEditStyle;
 		static GUIStyle TextEditStyle => _textEditStyle ??=
-			new GUIStyle(GUI.skin.textField);
+			new GUIStyle(GUI.skin.textField) { fixedWidth = 200 };
 
 		static GUIStyle _labelStyle;
 		static GUIStyle LabelStyle => _labelStyle ??=
@@ -43,7 +43,7 @@ namespace CriticalTemperatureGauge
 
 		static GUIStyle _sliderStyle;
 		static GUIStyle SliderStyle => _sliderStyle ??=
-			new GUIStyle(GUI.skin.horizontalSlider) { fixedWidth = 198 };
+			new GUIStyle(GUI.skin.horizontalSlider) { fixedWidth = 220 };
 
 		static GUIStyle _sliderThumbStyle;
 		static GUIStyle SliderThumbStyle => _sliderThumbStyle ??=
@@ -104,13 +104,16 @@ namespace CriticalTemperatureGauge
 				Static.Settings.ShowTemperature,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperature"),
 				ToggleStyle);
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(IndentWidth);
-			Static.Settings.ShowTemperatureLimit = GUILayout.Toggle(
-				Static.Settings.ShowTemperatureLimit,
-				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
-				ToggleStyle);
-			GUILayout.EndHorizontal();
+			if(Static.Settings.ShowTemperature)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Space(IndentWidth);
+				Static.Settings.ShowTemperatureLimit = GUILayout.Toggle(
+					Static.Settings.ShowTemperatureLimit,
+					Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
+					ToggleStyle);
+				GUILayout.EndHorizontal();
+			}
 			Static.Settings.ShowTemperatureRate = GUILayout.Toggle(
 				Static.Settings.ShowTemperatureRate,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
@@ -132,9 +135,20 @@ namespace CriticalTemperatureGauge
 			GUILayout.Space(SeparatorHeight);
 			Static.Settings.UseExclusionList = GUILayout.Toggle(
 				Static.Settings.UseExclusionList,
-				Localizer.Format("#LOC_CriticalTemperatureGauge_IgnorePartModules"),
+				Localizer.Format("#LOC_CriticalTemperatureGauge_IgnoreParts"),
 				ToggleStyle);
-			Static.Settings.ExclusionList = GUILayout.TextField(Static.Settings.ExclusionList, 512, TextEditStyle);
+			if(Static.Settings.UseExclusionList)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Space(IndentWidth);
+				GUILayout.BeginVertical();
+				GUILayout.Label(Localizer.Format("#LOC_CriticalTemperatureGauge_IgnorePartNames"), LabelStyle);
+				Static.Settings.ExclusionNameList = GUILayout.TextField(Static.Settings.ExclusionNameList, 512, TextEditStyle);
+				GUILayout.Label(Localizer.Format("#LOC_CriticalTemperatureGauge_IgnorePartModules"), LabelStyle);
+				Static.Settings.ExclusionModuleList = GUILayout.TextField(Static.Settings.ExclusionModuleList, 512, TextEditStyle);
+				GUILayout.EndVertical();
+				GUILayout.EndHorizontal();
+			}
 
 			// Part menu settings controls
 			GUILayout.Space(SeparatorHeight);
@@ -142,19 +156,22 @@ namespace CriticalTemperatureGauge
 				Static.Settings.PartMenuTemperature,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureInPartMenu"),
 				ToggleStyle);
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(IndentWidth);
-			GUILayout.BeginVertical();
-			Static.Settings.PartMenuTemperatureLimit = GUILayout.Toggle(
-				Static.Settings.PartMenuTemperatureLimit,
-				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
-				ToggleStyle);
-			Static.Settings.PartMenuTemperatureRate = GUILayout.Toggle(
-				Static.Settings.PartMenuTemperatureRate,
-				Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
-				ToggleStyle);
-			GUILayout.EndVertical();
-			GUILayout.EndHorizontal();
+			if(Static.Settings.PartMenuTemperature)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Space(IndentWidth);
+				GUILayout.BeginVertical();
+				Static.Settings.PartMenuTemperatureLimit = GUILayout.Toggle(
+					Static.Settings.PartMenuTemperatureLimit,
+					Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureLimit"),
+					ToggleStyle);
+				Static.Settings.PartMenuTemperatureRate = GUILayout.Toggle(
+					Static.Settings.PartMenuTemperatureRate,
+					Localizer.Format("#LOC_CriticalTemperatureGauge_ShowTemperatureRate"),
+					ToggleStyle);
+				GUILayout.EndVertical();
+				GUILayout.EndHorizontal();
+			}
 
 			// Interface settings controls
 			GUILayout.Space(SeparatorHeight);
@@ -167,15 +184,31 @@ namespace CriticalTemperatureGauge
 				Static.Settings.DockGaugeWindow,
 				Localizer.Format("#LOC_CriticalTemperatureGauge_DockGaugeToAltimeter"),
 				ToggleStyle);
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(IndentWidth);
-			Static.Settings.LockGaugeWindow = Static.Settings.DockGaugeWindow || GUILayout.Toggle(
-				Static.Settings.LockGaugeWindow,
-				Localizer.Format("#LOC_CriticalTemperatureGauge_LockGaugePosition"),
-				ToggleStyle);
-			GUILayout.EndHorizontal();
+			if(!Static.Settings.DockGaugeWindow)
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Space(IndentWidth);
+				Static.Settings.LockGaugeWindow = GUILayout.Toggle(
+					Static.Settings.LockGaugeWindow,
+					Localizer.Format("#LOC_CriticalTemperatureGauge_LockGaugePosition"),
+					ToggleStyle);
+				GUILayout.EndHorizontal();
+			}
+
+			// Resizing the window if some elements have been collapsed
+			GUILayout.Space(0);
+			var windowContentsHeight = (int) GUILayoutUtility.GetLastRect().y;
+			_windowSize =
+				windowContentsHeight < _windowContentsHeight
+				? new Vector2(WindowRectangle.width, windowContentsHeight + 60)
+				: (Vector2?) null;
+			_windowContentsHeight = windowContentsHeight;
 
 			GUI.DragWindow();
 		}
+
+		protected override Vector2? ConstWindowSize => _windowSize;
+		Vector2? _windowSize;
+		int _windowContentsHeight;
 	}
 }

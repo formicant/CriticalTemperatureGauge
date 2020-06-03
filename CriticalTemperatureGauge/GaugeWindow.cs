@@ -39,7 +39,7 @@ namespace CriticalTemperatureGauge
 		Vector2 DockPosition => new Vector2(Screen.width / 2, AltimeterScale * 83);
 
 		protected override Vector2? ConstWindowPosition =>
-			Static.Settings.LockGaugeWindow
+			Static.Settings.DockGaugeWindow || Static.Settings.LockGaugeWindow
 				? (Static.Settings.DockGaugeWindow ? DockPosition : Static.Settings.GaugeWindowPosition) +
 					Scale * WindowSize.x / 2 * Vector2.left
 				: (Vector2?)null;
@@ -121,7 +121,7 @@ namespace CriticalTemperatureGauge
 
 				GUILayout.EndVertical();
 
-				if(!Static.Settings.LockGaugeWindow)
+				if(!Static.Settings.DockGaugeWindow && !Static.Settings.LockGaugeWindow)
 					GUI.DragWindow();
 			}
 		}

@@ -39,6 +39,25 @@ namespace CriticalTemperatureGauge
 		/// <summary>A number between 0 and 1 showing how critical the part is.</summary>
 		public double Index => Math.Max(CoreTemperature / CoreTemperatureLimit, SkinTemperature / SkinTemperatureLimit);
 
+		/// <summary>The part is not in the exclusion list.</summary>
+		public bool IsNotIgnored { get; private set; }
+
+		public void UpdateExclusionStatus()
+		{
+			IsNotIgnored = !(Static.Settings.UseExclusionList && (
+				Static.Settings.ExcludedNames.Contains(part.partInfo.name) ||
+				Static.Settings.ExcludedNames.Contains(part.partInfo.title) ||
+				part.Modules.OfType<PartModule>().Any(module =>
+					Static.Settings.ExcludedModules.Contains(module.moduleName))));
+			if(!IsNotIgnored)
+			{
+				CoreTemperatureMenuLabel = null;
+				SkinTemperatureMenuLabel = null;
+				CoreTemperatureField.guiActive = false;
+				SkinTemperatureField.guiActive = false;
+			}
+		}
+
 		public void Start()
 		{
 			CoreTemperatureField = Fields[nameof(CoreTemperatureMenuLabel)];
@@ -50,50 +69,57 @@ namespace CriticalTemperatureGauge
 		{
 			while(!HighLogic.LoadedSceneIsFlight || vessel.HoldPhysics)
 				yield return new WaitForFixedUpdate();
-			yield return new WaitForFixedUpdate();
-			yield return new WaitForFixedUpdate();
 
 			Time = Planetarium.GetUniversalTime();
-			Title = GetPartTitle(part);
+			Title = part.partInfo.title;
 			CoreTemperatureLimit = part.maxTemp;
 			SkinTemperatureLimit = part.skinMaxTemp;
 			CoreTemperature = part.temperature;
 			SkinTemperature = part.skinTemperature;
 			CoreTemperatureRate = 0;
 			SkinTemperatureRate = 0;
+			UpdateExclusionStatus();
 		}
 
 		public void Update()
 		{
-			if(HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics && Static.Settings.PartMenuTemperature)
+			if(vessel.isActiveVessel)
 			{
-				// Updating the part menu values
-				CoreTemperatureMenuLabel =
-					Format.TemperatureWithRate(
-						CoreTemperature,
-						Static.Settings.PartMenuTemperatureLimit.Then(CoreTemperatureLimit),
-						Static.Settings.PartMenuTemperatureRate.Then(CoreTemperatureRate));
-				SkinTemperatureMenuLabel =
-					Format.TemperatureWithRate(
-						SkinTemperature,
-						Static.Settings.PartMenuTemperatureLimit.Then(SkinTemperatureLimit),
-						Static.Settings.PartMenuTemperatureRate.Then(SkinTemperatureRate));
+				if(IsNotIgnored && HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics)
+				{
+					if(Static.Settings.PartMenuTemperature)
+					{
+						// Updating the part menu values
+						CoreTemperatureMenuLabel =
+							Format.TemperatureWithRate(
+								CoreTemperature,
+								Static.Settings.PartMenuTemperatureLimit.Then(CoreTemperatureLimit),
+								Static.Settings.PartMenuTemperatureRate.Then(CoreTemperatureRate));
+						SkinTemperatureMenuLabel =
+							Format.TemperatureWithRate(
+								SkinTemperature,
+								Static.Settings.PartMenuTemperatureLimit.Then(SkinTemperatureLimit),
+								Static.Settings.PartMenuTemperatureRate.Then(SkinTemperatureRate));
 
-				CoreTemperatureField.guiActive = true;
-				SkinTemperatureField.guiActive = true;
+						CoreTemperatureField.guiActive = true;
+						SkinTemperatureField.guiActive = true;
+					}
+					else
+					{
+						CoreTemperatureMenuLabel = null;
+						SkinTemperatureMenuLabel = null;
+						CoreTemperatureField.guiActive = false;
+						SkinTemperatureField.guiActive = false;
+					}
+				}
 			}
-			else
-			{
-				CoreTemperatureMenuLabel = null;
-				SkinTemperatureMenuLabel = null;
-				CoreTemperatureField.guiActive = false;
-				SkinTemperatureField.guiActive = false;
-			}
+			else // not a part of the active vessel
+				part.RemoveModule(this);
 		}
 
 		public void FixedUpdate()
 		{
-			if(HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics)
+			if(IsNotIgnored && HighLogic.LoadedSceneIsFlight && !vessel.HoldPhysics)
 			{
 				var newTime = Planetarium.GetUniversalTime();
 				double timeSpan = 2 * (newTime - Time);
@@ -117,28 +143,5 @@ namespace CriticalTemperatureGauge
 		// Temperature rate value temporal smoothing
 		const double CoreTemperatureRateSmoothing = 0.5;
 		const double SkinTemperatureRateSmoothing = 0.1;
-
-		/// <summary>Gets the title (long name) of a part.</summary>
-		/// <param name="part">A vessel part.</param>
-		/// <returns>Part title.</returns>
-		static string GetPartTitle(Part part)
-		{
-			// Removing vessel name from part name
-			int indexOfWhitespace = part.name.IndexOf(' ');
-			var name = indexOfWhitespace >= 0
-				? part.name.Substring(0, indexOfWhitespace)
-				: part.name;
-
-			// Trying to get part title; using part name if failed
-			try
-			{
-				var title = PartLoader.getPartInfoByName(name).title;
-				return string.IsNullOrEmpty(title) ? name : title;
-			}
-			catch
-			{
-				return name;
-			}
-		}
 	}
 }

@@ -57,22 +57,57 @@ namespace CriticalTemperatureGauge
 
 		// Exclusion list settings
 
-		public bool UseExclusionList { get; set; }
-
-		string _exclusionList;
-		public string ExclusionList
+		public bool UseExclusionList
 		{
-			get => _exclusionList;
-			set
-			{
-				_exclusionList = value;
-				ExclusionListItems = _exclusionList.Split(',')
-					.Select(item => item.Trim())
-					.Where(item => !string.IsNullOrEmpty(item))
-					.ToList();
+			get => _useExclusionList;
+			set {
+				if(_useExclusionList != value)
+				{
+					_useExclusionList = value;
+					ExclusionListChanged = true;
+				}
 			}
 		}
-		public IEnumerable<string> ExclusionListItems { get; private set; }
+		bool _useExclusionList;
+
+		string _exclusionNameList;
+		public string ExclusionNameList
+		{
+			get => _exclusionNameList;
+			set
+			{
+				if(_exclusionNameList != value)
+				{
+					_exclusionNameList = value;
+					ExcludedNames = _exclusionNameList
+						.GetCommaSeparatedItems()
+						.ToHashSet(StringComparer.OrdinalIgnoreCase);
+					ExclusionListChanged = true;
+				}
+			}
+		}
+		public ISet<string> ExcludedNames { get; private set; }
+
+		string _exclusionModuleList;
+		public string ExclusionModuleList
+		{
+			get => _exclusionModuleList;
+			set
+			{
+				if(_exclusionModuleList != value)
+				{
+					_exclusionModuleList = value;
+					ExcludedModules = _exclusionModuleList
+						.GetCommaSeparatedItems()
+						.AddModulePrefixes()
+						.ToHashSet(StringComparer.OrdinalIgnoreCase);
+					ExclusionListChanged = true;
+				}
+			}
+		}
+		public ISet<string> ExcludedModules { get; private set; }
+
+		public bool ExclusionListChanged { get; set; }
 
 		/// <summary>Saves the settings to the XML file inside PluginData directory.</summary>
 		public void Save()
@@ -97,7 +132,8 @@ namespace CriticalTemperatureGauge
 			settings.SetValue(nameof(PartMenuTemperatureLimit), PartMenuTemperatureLimit);
 			settings.SetValue(nameof(PartMenuTemperatureRate),  PartMenuTemperatureRate);
 			settings.SetValue(nameof(UseExclusionList),         UseExclusionList);
-			settings.SetValue(nameof(ExclusionList),            ExclusionList);
+			settings.SetValue(nameof(ExclusionNameList),        ExclusionNameList);
+			settings.SetValue(nameof(ExclusionModuleList),      ExclusionModuleList);
 
 			settings.save();
 		}
@@ -129,7 +165,8 @@ namespace CriticalTemperatureGauge
 				PartMenuTemperatureLimit = settings.GetValue(nameof(PartMenuTemperatureLimit), true),
 				PartMenuTemperatureRate  = settings.GetValue(nameof(PartMenuTemperatureRate),  true),
 				UseExclusionList         = settings.GetValue(nameof(UseExclusionList),         false),
-				ExclusionList            = settings.GetValue(nameof(ExclusionList),            ""),
+				ExclusionNameList        = settings.GetValue(nameof(ExclusionNameList),        ""),
+				ExclusionModuleList      = settings.GetValue(nameof(ExclusionModuleList),      ""),
 			};
 		}
 	}
