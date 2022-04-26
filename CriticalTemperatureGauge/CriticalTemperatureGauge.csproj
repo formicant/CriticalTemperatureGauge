@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Altimeter.cs" />
     <Compile Include="Wrappers\ClickThroughBlocker.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Flight.cs" />

@@ -31,16 +31,15 @@ namespace CriticalTemperatureGauge
 
 		const float FontSize = 14;
 
+		readonly Altimeter _altimeter = new Altimeter();
+
 		protected override GUISkin Skin => GUI.skin;
 
-		float AltimeterScale => GameSettings.UI_SCALE * GameSettings.UI_SCALE_ALTIMETER;
-		float Scale => AltimeterScale * Static.Settings.GaugeWindowScale;
-
-		Vector2 DockPosition => new Vector2(Screen.width / 2, AltimeterScale * 83);
+		float Scale => _altimeter.Scale * Static.Settings.GaugeWindowScale;
 
 		protected override Vector2? ConstWindowPosition =>
 			Static.Settings.DockGaugeWindow || Static.Settings.LockGaugeWindow
-				? (Static.Settings.DockGaugeWindow ? DockPosition : Static.Settings.GaugeWindowPosition) +
+				? (Static.Settings.DockGaugeWindow ? _altimeter.DockPosition : Static.Settings.GaugeWindowPosition) +
 					Scale * WindowSize.x / 2 * Vector2.left
 				: (Vector2?)null;
 
@@ -48,7 +47,7 @@ namespace CriticalTemperatureGauge
 
 		protected override Rect InitialWindowRectangle =>
 			new Rect(
-				DockPosition - new Vector2(Scale * 120, 0),
+				_altimeter.DockPosition - new Vector2(Scale * 120, 0),
 				ConstWindowSize.Value);
 
 		/// <summary>Creates the temperature gauge window.</summary>
@@ -59,7 +58,7 @@ namespace CriticalTemperatureGauge
 		protected override void OnWindowRectUpdated()
 		{
 			Static.Settings.GaugeWindowPosition = Static.Settings.DockGaugeWindow
-				? DockPosition
+				? _altimeter.DockPosition
 				: WindowRectangle.position + Scale * WindowSize.x / 2 * Vector2.right;
 		}
 
