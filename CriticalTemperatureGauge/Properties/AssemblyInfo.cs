@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.12.3.0")]
+[assembly: AssemblyVersion("1.12.3.1")]
 
 // Use KSPAssembly to allow other DLLs to make this DLL a dependency in a 
 // non-hacky way in KSP.  Format is (AssemblyProduct, major, minor), and it 

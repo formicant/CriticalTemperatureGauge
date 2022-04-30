@@ -12,7 +12,6 @@ namespace CriticalTemperatureGauge
 		{
 			var altitudeTumbler = GameObject.FindObjectOfType<KSP.UI.Screens.Flight.AltitudeTumbler>();
 			_altimeterPanel = altitudeTumbler.gameObject.transform.parent.parent.gameObject;
-			_screenCenter = Screen.width / 2f;
 		}
 
 		public float Scale => _altimeterPanel.transform.lossyScale.y;
@@ -22,17 +21,14 @@ namespace CriticalTemperatureGauge
 			get
 			{
 				var position = _altimeterPanel.transform.position;
-				var x = ShiftX + position.x;
-				var y = ShiftY - position.y + (Height - Margin) * Scale;
+				var x = Screen.width / 2f + position.x;
+				var y = Screen.height / 2f - position.y + (Height - Margin) * Scale;
 				return new Vector2(x, y);
 			}
 		}
 
 		readonly GameObject _altimeterPanel;
-		readonly float _screenCenter;
 
-		const float ShiftX = 840;
-		const float ShiftY = 525;
 		const float Height = 82.5f;
 		const float Margin = 8.5f;
 	}
